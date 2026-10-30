@@ -92,10 +92,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           AHK_TAG: v2.0.31
           AHK_VERSION: 2.0.31
-          AHK_SHA256: ""
+          AHK_SHA256: ca1a595aca4528755d8d4cd7fed23d497a37bd9a0b6892072612d68dee1bd00a
           AHK2EXE_TAG: Ahk2Exe1.1.37.02a2
           AHK2EXE_VERSION: 1.1.37.02a2
-          AHK2EXE_SHA256: ""
+          AHK2EXE_SHA256: c29b8c3a5124850d79fc9e66e2ca79677c377d7f31631ad3022ba159c5d9e3be
         run: |
           # errors become annotations on the run, so they show without opening the log
           trap { Write-Output "::error title=Getting AutoHotkey::$($_.Exception.Message)"; exit 1 }
