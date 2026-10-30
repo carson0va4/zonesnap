@@ -6,6 +6,12 @@ Every build gets its own version: a new minor version (0.x.0) for new features o
 
 Each version lists what was **Added**, **Changed**, **Fixed** and **Removed**.
 
+## 0.39.3
+
+### Changed
+- Nothing changes in the app itself. The GitHub repository was re-created with a clean history starting at 0.39.2, so the earlier GitHub releases and tags (up to v0.39.1) are gone; this changelog still lists every version.
+- Development: every change now goes through a pull request into `main`, checked by the Build workflow before it's merged. Releases are drafted only by running the Build workflow by hand on `main`, no longer from a `[release]` commit message.
+
 ## 0.39.2
 
 ### Fixed

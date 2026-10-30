@@ -94,14 +94,16 @@ These are the defaults. Every keyboard shortcut can be changed on the Hotkeys pa
 2. Keep `ZoneSnap.ahk`, `ZoneSnap.ico`, `ui.html`, `guide.html`, `src` and `Lib` together. Ahk2Exe stops with an error if a bundled or included file is missing.
 3. Compile `ZoneSnap.ahk` with the **64-bit v2** base. The .exe includes the icon, the interface, the user guide and the WebView2 loader.
 
-GitHub does this too. Every push to `main` runs the **Build** workflow (Actions tab):
+GitHub does this too. Every pull request into `main`, and every merge to `main`, runs the **Build** workflow (Actions tab):
 
 - **Checks:** static checks of the AutoHotkey code, repository checks and the window tests (see [tests](tests/README.md)).
 - **Build:** loads the script under AutoHotkey v2 on Windows and compiles `ZoneSnap.exe`, kept with the run for 14 days.
 
-To draft a release of the current version, with the .exe, the script zip and that version's changelog, start a commit message with `[release]`, or run the workflow by hand with **Draft a release** ticked. Drafts are private until you publish them.
+To draft a release of the current version, with the .exe, the script zip and that version's changelog, run the workflow by hand on `main` with **Draft a release** ticked. Drafts are private until you publish them.
 
 ## Making a change
+
+Changes never go straight to `main`: make a branch, then open a pull request into `main` once the steps below are done. It's merged (squash and merge) once Checks and Build pass.
 
 1. Change the code, then bump the version: `ZS_VERSION` and `;@Ahk2Exe-SetVersion` in `ZoneSnap.ahk`, and `version:` in `ui.html`'s demo data. Use a new minor version for features or removals, and a patch version for fixes.
 2. Add a section to `CHANGELOG.md`, and update this README and the guide (`docs/guide/guide.src.html`) if anything you can see changed.

@@ -1,11 +1,11 @@
-# On every push to main and pull request (and by hand from the Actions tab):
+# On every pull request into main, every merge to main, and by hand from the Actions tab:
 #   Checks  (Linux)    static checks of the AutoHotkey code, repository checks, and the window
 #                      tests in a real browser. See tests/README.md.
 #   Build   (Windows)  check ZoneSnap loads under AutoHotkey v2 and compile ZoneSnap.exe. The
 #                      .exe and the script zip are kept with the run for 14 days.
 #
-# Releases: start a commit message pushed to main with [release], or run this workflow by hand
-# with "Draft a release" ticked. Once Checks and Build pass, that drafts a GitHub pre-release
+# Releases: run this workflow by hand on main with "Draft a release" ticked. Once Checks and
+# Build pass, that drafts a GitHub pre-release
 # for ZS_VERSION with the .exe and the script zip attached and that version's CHANGELOG section
 # as its notes. Drafts are only visible to you until you publish them; publishing creates the
 # tag. A version that already has a release is left alone.
@@ -15,6 +15,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       release:
@@ -166,9 +167,7 @@ jobs:
 
   release:
     name: Draft release
-    if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.release) ||
-      (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release]'))
+    if: github.event_name == 'workflow_dispatch' && inputs.release && github.ref == 'refs/heads/main'
     needs: [checks, build]
     runs-on: ubuntu-24.04
     permissions:
