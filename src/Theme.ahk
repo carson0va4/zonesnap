@@ -49,7 +49,7 @@ StyleCaption(hwnd, preview := "") {
 ; ---------------------------------------------------------------------------
 ; Accent colour. [Settings] AccentMode = teal (ZoneSnap's own, the default), windows (your
 ; Windows accent colour) or custom ([Settings] AccentCustom = RRGGBB). Every accent shade comes
-; from that one colour, worked out the same way here and in ui.html's applyTheme():
+; from that one colour, worked out the same way here and in the house accent.js in ui.html (accentTokens):
 ;   fill       buttons, switches and the title bar: darkened until white text on it reads (4.5:1)
 ;   highlight  drag overlays, pin buttons, focus rings: lighter, and readable on the dark panel
 ; ---------------------------------------------------------------------------
