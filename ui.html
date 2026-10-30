@@ -1777,7 +1777,7 @@ $("#modal-form").addEventListener("submit", (e) => {
 // ---------------------------------------------------------------- demo data (browser preview only)
 function demoState(extra) {
   return Object.assign({
-    type: "state", version: "0.39.3", page: new URLSearchParams(location.search).get("page") || "zones",
+    type: "state", version: "0.39.4", page: new URLSearchParams(location.search).get("page") || "zones",
     theme: { dark: new URLSearchParams(location.search).get("theme") === "light" ? 0 : 1, accent: "C24E1C" },   // demo Windows accent: orange
     monitor: { x: 0, y: 0, w: 3840, h: 1080 }, activeLayout: "Normal", gamingOn: 0,
     monitors: new URLSearchParams(location.search).get("mons") === "2"

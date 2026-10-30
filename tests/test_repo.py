@@ -20,8 +20,15 @@ def test_one_version_everywhere():
     assert re.search(r";@Ahk2Exe-SetVersion\s+(\S+)", MAIN).group(1) == v, "Ahk2Exe-SetVersion"
     ui = (ROOT / "ui.html").read_text(encoding="utf-8")
     assert f'version: "{v}"' in ui, "ui.html demo version"
-    top = re.search(r"^## (\S+)", (ROOT / "CHANGELOG.md").read_text(encoding="utf-8"), re.M).group(1)
+    top = re.search(r"^## \[([^\]]+)\]", (ROOT / "CHANGELOG.md").read_text(encoding="utf-8"), re.M).group(1)
     assert top == v, "the newest CHANGELOG section"
+
+
+def test_changelog_headings_follow_keep_a_changelog():
+    headings = re.findall(r"^## .*$", (ROOT / "CHANGELOG.md").read_text(encoding="utf-8"), re.M)
+    bad = [h for h in headings if not re.fullmatch(r"## \[\d+\.\d+\.\d+\]( - \d{4}-\d{2}-\d{2})?", h)]
+    assert not bad, f"version headings are '## [X.Y.Z] - YYYY-MM-DD': {bad}"
+    assert re.fullmatch(r"## \[[^\]]+\] - \d{4}-\d{2}-\d{2}", headings[0]), "the newest version has its date"
 
 
 def test_guide_html_is_built_from_its_source():
