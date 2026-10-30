@@ -6,6 +6,11 @@ Every build gets its own version: a new minor version (0.x.0) for new features o
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/): each version lists what was **Added**, **Changed**, **Fixed** and **Removed**. Versions before 0.39.3 are listed without dates.
 
+## [0.39.5] - 2026-10-30
+
+### Changed
+- Nothing changes in the app itself. The build now always uses AutoHotkey 2.0.31 and Ahk2Exe 1.1.37.02a2, downloaded from their GitHub releases and checked by SHA-256 and version, instead of whatever was newest. A new AutoHotkey can no longer change ZoneSnap.exe without a change here, and the build no longer warns that autohotkey.com refused the download.
+
 ## [0.39.4] - 2026-10-30
 
 ### Changed
