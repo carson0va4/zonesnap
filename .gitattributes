@@ -1,0 +1,16 @@
+# Text files are stored with LF line endings; Git converts on checkout as your settings say.
+# AutoHotkey reads either.
+* text=auto
+
+# Third-party library files are kept byte for byte as published
+Lib/** -text
+
+*.dll  binary
+*.exe  binary
+*.ico  binary
+*.png  binary
+*.webp binary
+
+# GitHub's language bar and diffs: guide.html is built (tools/build_guide.py), Lib is vendored
+guide.html linguist-generated=true
+Lib/**     linguist-vendored=true

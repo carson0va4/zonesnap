@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Getting started and the user guide
+    url: https://github.com/carson0va4/zonesnap#quick-start
+    about: The README covers setup. The full user guide, with troubleshooting, opens inside ZoneSnap with F1.
+  - name: Report a security problem privately
+    url: https://github.com/carson0va4/zonesnap/security/advisories/new
+    about: Please don't post security problems in a public issue.

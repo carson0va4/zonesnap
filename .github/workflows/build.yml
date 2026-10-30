@@ -1,0 +1,206 @@
+# On every push to main and pull request (and by hand from the Actions tab):
+#   Checks  (Linux)    static checks of the AutoHotkey code, repository checks, and the window
+#                      tests in a real browser. See tests/README.md.
+#   Build   (Windows)  check ZoneSnap loads under AutoHotkey v2 and compile ZoneSnap.exe. The
+#                      .exe and the script zip are kept with the run for 14 days.
+#
+# Releases: start a commit message pushed to main with [release], or run this workflow by hand
+# with "Draft a release" ticked. Once Checks and Build pass, that drafts a GitHub pre-release
+# for ZS_VERSION with the .exe and the script zip attached and that version's CHANGELOG section
+# as its notes. Drafts are only visible to you until you publish them; publishing creates the
+# tag. A version that already has a release is left alone.
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Draft a release of this version
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: tools/requirements.txt
+
+      # The runner image already has Chrome's system libraries, so only the browser itself is
+      # downloaded (installing them again with --with-deps took ~10 minutes)
+      - name: Install test tools
+        timeout-minutes: 5
+        run: |
+          pip install -r tools/requirements.txt
+          python -m playwright install chromium
+
+      - name: Static checks
+        run: python tests/static_check.py
+
+      # Each failing test and its error also become annotations on the run, readable without the log
+      - name: Repository and window tests
+        run: |
+          set +e
+          python -m pytest tests -p no:cacheprovider -rf --tb=line 2>&1 | tee pytest.txt
+          status=${PIPESTATUS[0]}
+          grep -E '^(FAILED|ERROR) ' pytest.txt | head -10 | while IFS= read -r l; do echo "::error title=Test::${l:0:900}"; done
+          grep -E '^(/|tests/).*:[0-9]+: ' pytest.txt | head -10 | while IFS= read -r l; do echo "::error title=Where::${l:0:900}"; done
+          exit $status
+
+  build:
+    name: Build
+    runs-on: windows-2025
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read the version
+        id: version
+        run: |
+          $m = Select-String -Path ZoneSnap.ahk -Pattern 'ZS_VERSION\s*:=\s*"([^"]+)"'
+          if (-not $m) { throw "ZS_VERSION not found in ZoneSnap.ahk" }
+          $v = $m.Matches[0].Groups[1].Value
+          $set = Select-String -Path ZoneSnap.ahk -Pattern '@Ahk2Exe-SetVersion\s+(\S+)'
+          if ($set.Matches[0].Groups[1].Value -ne $v) { throw "Ahk2Exe-SetVersion and ZS_VERSION differ" }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          Write-Host "ZoneSnap $v"
+
+      - name: Get AutoHotkey v2 and Ahk2Exe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # errors become annotations on the run, so they show without opening the log
+          trap { Write-Output "::error title=Getting AutoHotkey::$($_.Exception.Message)"; exit 1 }
+          New-Item -ItemType Directory -Force tools | Out-Null
+          try {
+            Invoke-WebRequest https://www.autohotkey.com/download/ahk-v2.zip -OutFile tools\ahk.zip -UserAgent "Mozilla/5.0"
+          } catch {
+            Write-Output "::warning title=autohotkey.com::$($_.Exception.Message) - trying GitHub instead"
+            gh release download --repo AutoHotkey/AutoHotkey --pattern "AutoHotkey_2*.zip" --output tools\ahk.zip
+            if ($LASTEXITCODE -ne 0) { throw "Couldn't download AutoHotkey v2 from autohotkey.com or GitHub" }
+          }
+          Expand-Archive tools\ahk.zip tools\ahk
+          gh release download --repo AutoHotkey/Ahk2Exe --pattern "Ahk2Exe*.zip" --output tools\ahk2exe.zip
+          if ($LASTEXITCODE -ne 0) {
+            $names = gh release view --repo AutoHotkey/Ahk2Exe --json assets --jq '[.assets[].name] | join(", ")'
+            throw "Couldn't download Ahk2Exe from GitHub (assets: $names)"
+          }
+          Expand-Archive tools\ahk2exe.zip tools\ahk2exe
+          $ahk = Get-ChildItem tools\ahk -Recurse -Filter AutoHotkey64.exe | Select-Object -First 1
+          $a2e = Get-ChildItem tools\ahk2exe -Recurse -Filter Ahk2Exe.exe | Select-Object -First 1
+          if (-not $ahk) { throw "AutoHotkey64.exe missing from the download: $((Get-ChildItem tools\ahk -Recurse).Name -join ', ')" }
+          if (-not $a2e) { throw "Ahk2Exe.exe missing from the download: $((Get-ChildItem tools\ahk2exe -Recurse).Name -join ', ')" }
+          "AHK=$($ahk.FullName)" >> $env:GITHUB_ENV
+          "AHK2EXE=$($a2e.FullName)" >> $env:GITHUB_ENV
+          Write-Host "AutoHotkey $($ahk.VersionInfo.FileVersion), Ahk2Exe $($a2e.VersionInfo.FileVersion)"
+
+      # Proves the load check works: a script with a syntax error must fail it
+      - name: Check the load check catches errors
+        run: |
+          trap { Write-Output "::error title=Load check self-test::$($_.Exception.Message)"; exit 1 }
+          Set-Content broken.ahk "#Requires AutoHotkey v2.0`nx := (1 +`nMsgBox 'should not run'"
+          $p = Start-Process $env:AHK -ArgumentList '/ErrorStdOut=UTF-8', '/Validate', 'broken.ahk' `
+            -PassThru -NoNewWindow -RedirectStandardError broken.txt -RedirectStandardOutput broken-out.txt
+          if (-not $p.WaitForExit(60000)) { $p.Kill(); throw "AutoHotkey didn't exit on a broken script" }
+          if ($p.ExitCode -eq 0) { throw "A broken script passed the load check, so the check proves nothing" }
+          Write-Host "Broken script rejected as expected: $((Get-Content broken.txt -ErrorAction SilentlyContinue) -join ' ')"
+
+      # Loads the script (and every #Include) and exits without running it, so syntax and
+      # load-time errors fail the build. Killed after 60 s in case it ever starts running.
+      - name: Check the script loads
+        run: |
+          trap { Write-Output "::error title=Load check::$($_.Exception.Message)"; exit 1 }
+          $p = Start-Process $env:AHK -ArgumentList '/ErrorStdOut=UTF-8', '/Validate', 'ZoneSnap.ahk' `
+            -PassThru -NoNewWindow -RedirectStandardError validate.txt -RedirectStandardOutput validate-out.txt
+          if (-not $p.WaitForExit(60000)) { $p.Kill(); throw "AutoHotkey didn't exit - the script may have started running" }
+          $out = (Get-Content validate.txt, validate-out.txt -ErrorAction SilentlyContinue) -join "`n"
+          Write-Host $out
+          if ($p.ExitCode -ne 0) { throw "The script has errors (exit code $($p.ExitCode)): $($out -replace '\r?\n', ' | ')" }
+
+      - name: Compile ZoneSnap.exe
+        run: |
+          trap { Write-Output "::error title=Compile::$($_.Exception.Message)"; exit 1 }
+          $p = Start-Process $env:AHK2EXE -ArgumentList '/in', 'ZoneSnap.ahk', '/out', 'ZoneSnap.exe',
+            '/base', $env:AHK, '/silent', 'verbose' `
+            -PassThru -NoNewWindow -RedirectStandardOutput compile.txt -RedirectStandardError compile-err.txt
+          if (-not $p.WaitForExit(300000)) { $p.Kill(); throw "Ahk2Exe timed out" }
+          $out = (Get-Content compile.txt, compile-err.txt -ErrorAction SilentlyContinue) -join "`n"
+          Write-Host $out
+          if ($p.ExitCode -ne 0 -or -not (Test-Path ZoneSnap.exe)) { throw "Compile failed (exit code $($p.ExitCode)): $($out -replace '\r?\n', ' | ')" }
+          $info = (Get-Item ZoneSnap.exe).VersionInfo
+          Write-Output "::notice title=Built::ZoneSnap.exe $([math]::Round((Get-Item ZoneSnap.exe).Length / 1MB, 2)) MB, file version $($info.FileVersion), AutoHotkey $((Get-Item $env:AHK).VersionInfo.FileVersion), Ahk2Exe $((Get-Item $env:AHK2EXE).VersionInfo.FileVersion)"
+
+      - name: Make the script zip
+        run: |
+          $v = "${{ steps.version.outputs.version }}"
+          New-Item -ItemType Directory -Force pkg\ZoneSnap | Out-Null
+          Copy-Item ZoneSnap.ahk, ZoneSnap.ico, ui.html, guide.html, README.md, CHANGELOG.md, LICENSE pkg\ZoneSnap
+          Copy-Item src, Lib pkg\ZoneSnap -Recurse
+          Compress-Archive pkg\ZoneSnap "ZoneSnap-$v-script.zip"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ZoneSnap-${{ steps.version.outputs.version }}
+          path: |
+            ZoneSnap.exe
+            ZoneSnap-${{ steps.version.outputs.version }}-script.zip
+          retention-days: 14
+
+  release:
+    name: Draft release
+    if: >-
+      (github.event_name == 'workflow_dispatch' && inputs.release) ||
+      (github.event_name == 'push' && startsWith(github.event.head_commit.message, '[release]'))
+    needs: [checks, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: ZoneSnap-${{ needs.build.outputs.version }}
+
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          # The CHANGELOG from this version back to the last published release (versions that were
+          # never published are included). With nothing published yet: this version's whole minor
+          # series (0.37.3 -> 0.37.3, 0.37.2, 0.37.1 and 0.37.0).
+          LAST=$(gh release list --exclude-drafts --limit 100 --json tagName --jq '.[0].tagName // ""')
+          LAST=${LAST#v}
+          SERIES="## ${VERSION%.*}."
+          awk -v h="## $VERSION" -v stop="## $LAST" -v series="$SERIES" -v none="$([ -z "$LAST" ] && echo 1)" \
+            '$0 == h {on=1; print; next}
+             on && /^## / && ((none && index($0, series) != 1) || (!none && $0 == stop)) {exit}
+             on' CHANGELOG.md > notes.md
+          grep -q . notes.md || { echo "::error title=Release::No CHANGELOG section for $VERSION"; exit 1; }
+          if [ "$(grep -c '^## ' notes.md)" = 1 ]; then sed -i 1d notes.md; fi      # one version: no heading
+          echo "::notice title=Release notes::$(grep '^## ' notes.md | tr '\n' ' ' | sed 's/## //g')since ${LAST:-the start of ${VERSION%.*}}"
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "::warning title=Release::v$VERSION already has a release - left alone"; exit 0
+          fi
+          gh release create "v$VERSION" ZoneSnap.exe "ZoneSnap-$VERSION-script.zip" \
+            --draft --prerelease --target "$GITHUB_SHA" --title "ZoneSnap $VERSION" --notes-file notes.md
+          echo "::notice title=Release::Drafted ZoneSnap $VERSION - publish it from the Releases page"

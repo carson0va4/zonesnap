@@ -1,0 +1,11 @@
+# Your own settings and backups (ZoneSnap writes these next to the script)
+ZoneSnap.ini
+ZoneSnap backup *.ini
+
+# Build output
+*.exe
+*.zip
+
+# Python and test leftovers
+__pycache__/
+.pytest_cache/

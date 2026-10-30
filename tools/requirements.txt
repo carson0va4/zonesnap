@@ -1,0 +1,5 @@
+# For tools/screenshots.py and the tests (tests/README.md). After installing:
+#   python -m playwright install chromium
+playwright>=1.64.1
+pillow>=13.0.0
+pytest>=9.1.1

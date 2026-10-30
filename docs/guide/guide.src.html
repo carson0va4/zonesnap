@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZoneSnap User Guide</title>
+<style>
+:root {
+  /* House style 2 (claude/house-style): --accent here is GuideAccent (links, section numbers),
+     --accent-soft and --tip-* are the Tip colours, --key-* the key badges. */
+  --accent: #136A5D; --accent-soft: #E3F4F1; --tip-line: #B9E2DA; --tip-text: #134E46; --accent-ink: #FFFFFF;
+  --bg: #F3F5F8; --panel: #FFFFFF; --side: #EAEEF2; --field: #FAFBFC; --line: #E2E6EC; --border: #D6DCE3;
+  --text: #141C27; --text2: #34414E; --sub: #566273; --faint: #566273; --warn-bg: #FFF4E5; --warn-line: #F2C48D;
+  --key: #E3F4F1; --key-border: #B9E2DA; --key-text: #155F55;
+  --font: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --accent: #3CC5B0; --accent-soft: #14272A; --tip-line: #22423F; --tip-text: #C9E9E3; --accent-ink: #0B1F1C;
+    --bg: #141A21; --panel: #19202A; --side: #10151B; --field: #0F141A; --line: #232B35; --border: #29323D;
+    --text: #E6EAEF; --text2: #C9D1D9; --sub: #95A0AE; --faint: #95A0AE; --warn-bg: #2A2118; --warn-line: #6B4A2A;
+    --key: #14272A; --key-border: #22423F; --key-text: #8FD9CC;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --accent: #3CC5B0; --accent-soft: #14272A; --tip-line: #22423F; --tip-text: #C9E9E3; --accent-ink: #0B1F1C;
+  --bg: #141A21; --panel: #19202A; --side: #10151B; --field: #0F141A; --line: #232B35; --border: #29323D;
+  --text: #E6EAEF; --text2: #C9D1D9; --sub: #95A0AE; --faint: #95A0AE; --warn-bg: #2A2118; --warn-line: #6B4A2A;
+  --key: #14272A; --key-border: #22423F; --key-text: #8FD9CC;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 var(--font); }
+a { color: var(--accent); text-underline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+nav.toc { position: sticky; top: 0; align-self: start; height: 100vh; overflow: auto; padding: 28px 18px 28px 24px; border-right: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+.brand svg { flex-shrink: 0; }
+.ver { font-size: 12px; color: var(--faint); margin: 0 0 20px 34px; }
+.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.toc li { counter-increment: s; }
+.toc a { display: flex; gap: 8px; padding: 5px 10px; border-radius: 7px; color: var(--sub); text-decoration: none; font-size: 14px; }
+.toc a::before { content: counter(s); min-width: 16px; color: var(--faint); font-variant-numeric: tabular-nums; }
+.toc a:hover { background: var(--side); color: var(--text); }
+
+main { padding: 40px 48px 80px; min-width: 0; }
+.content { max-width: 760px; }
+header.hero h1 { margin: 0 0 8px; font-size: 32px; line-height: 1.2; letter-spacing: -0.01em; }
+.lede { margin: 0; font-size: 17px; color: var(--sub); max-width: 640px; }
+section { padding-top: 44px; counter-increment: h; }
+.content { counter-reset: h; }
+h2 { margin: 0 0 12px; font-size: 23px; line-height: 1.3; display: flex; gap: 12px; align-items: baseline; }
+h2::before { content: counter(h); color: var(--accent); font-size: 17px; font-variant-numeric: tabular-nums; }
+h3 { margin: 28px 0 8px; font-size: 17px; }
+p, ul, ol { margin: 0 0 12px; }
+ul, ol { padding-left: 22px; }
+li { margin: 4px 0; }
+li::marker { color: var(--faint); }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: 13px; padding: 1px 5px; border-radius: 5px; background: var(--field); border: 1px solid var(--line); overflow-wrap: anywhere; }
+kbd { display: inline-block; padding: 0 7px; font: 600 12.5px/22px var(--mono); background: var(--key); border: 1px solid var(--key-border); color: var(--key-text); border-radius: 6px; white-space: nowrap; }
+
+.steps { list-style: none; padding: 0; counter-reset: st; }
+.steps > li { counter-increment: st; position: relative; padding: 2px 0 10px 44px; margin: 0; }
+.steps > li::before { content: counter(st); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+figure { margin: 18px 0 22px; }
+figure img { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid var(--border); }
+figcaption { margin-top: 8px; font-size: 13px; color: var(--faint); }
+
+.note { margin: 16px 0; padding: 12px 16px; border-radius: 10px; background: var(--accent-soft); border: 1px solid var(--tip-line); color: var(--tip-text); }
+.note.warn { background: var(--warn-bg); border-color: var(--warn-line); color: var(--text); }
+.note > :last-child { margin-bottom: 0; }
+.note b:first-child { display: block; margin-bottom: 2px; }
+
+.tbl { overflow-x: auto; margin: 14px 0 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 14px; border-top: 1px solid var(--line); }
+thead th { border-top: 0; background: var(--side); font-weight: 600; font-size: 13px; color: var(--sub); }
+td:first-child { white-space: nowrap; }
+td.wrap-ok { white-space: normal; }
+
+.faq dt { font-weight: 600; margin-top: 18px; }
+.faq dd { margin: 4px 0 0; color: var(--text); }
+.top { display: inline-block; margin-top: 10px; font-size: 13px; }
+footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 13px; color: var(--faint); }
+
+@media (max-width: 920px) {
+  .wrap { display: block; }
+  nav.toc { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding: 20px 16px; }
+  .toc ol { columns: 2; column-gap: 12px; }
+  main { padding: 28px 16px 60px; }
+  header.hero h1 { font-size: 26px; }
+}
+@media (max-width: 520px) { .toc ol { columns: 1; } td:first-child { white-space: normal; } }
+/* Embedded in the ZoneSnap window's side panel (guide.html?embed=1) */
+.embed-only, .embed-bar { display: none; }
+.embed .embed-only { display: block; }
+.embed nav.toc { display: none; }
+.embed .wrap { display: block; }
+.embed main { padding: 0 18px 48px; }
+.embed .embed-bar { display: block; position: sticky; top: 0; z-index: 2; margin: 0 -18px; padding: 10px 18px; background: var(--bg); border-bottom: 1px solid var(--line); }
+.embed .embed-bar select { width: 100%; height: 34px; padding: 0 10px; font: inherit; font-size: 14px; color: var(--text); background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+.embed header.hero { padding-top: 20px; }
+.embed header.hero h1 { font-size: 22px; }
+.embed .lede { font-size: 15px; }
+.embed section { padding-top: 32px; }
+.embed h2 { font-size: 19px; flex-wrap: wrap; }
+.embed h2::before { font-size: 15px; }
+.embed td:first-child { white-space: normal; }
+.embed th, .embed td { padding: 8px 10px; }
+html.embed { scroll-padding-top: 64px; }
+.embed figure { margin: 14px 0 18px; }
+.show { margin-left: auto; align-self: center; padding: 4px 10px; font: 600 12px var(--font); color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 7px; cursor: pointer; white-space: nowrap; }
+.show:hover { background: var(--accent-soft); }
+@media print {
+  nav.toc { display: none; }
+  .wrap { display: block; }
+  main { padding: 0; }
+  section { break-inside: avoid-page; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <div class="brand">
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="3" width="22" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="4" y="6" width="3.5" height="5" rx="1" fill="currentColor" opacity=".55"/><rect x="4" y="13" width="3.5" height="5" rx="1" fill="currentColor" opacity=".55"/><rect x="9.5" y="6" width="8" height="12" rx="1.2" fill="var(--accent)"/><rect x="19" y="6" width="1.5" height="12" rx=".7" fill="currentColor" opacity=".55"/></svg>
+    ZoneSnap
+  </div>
+  <p class="ver">User guide · version {{VERSION}}</p>
+  <ol>
+    <li><a href="#start">Getting started</a></li>
+    <li><a href="#install">Installing and updating</a></li>
+    <li><a href="#snap">Snapping windows</a></li>
+    <li><a href="#zones">Zones and the zone editor</a></li>
+    <li><a href="#workspaces">Workspaces and gaming mode</a></li>
+    <li><a href="#apps">Apps for your side panes</a></li>
+    <li><a href="#games">Games</a></li>
+    <li><a href="#cursor">Cursor lock</a></li>
+    <li><a href="#dim">Dimming side panes</a></li>
+    <li><a href="#taskbar">The taskbar</a></li>
+    <li><a href="#monitors">Multiple monitors</a></li>
+    <li><a href="#hotkeys">Hotkeys</a></li>
+    <li><a href="#settings">Settings and the tray menu</a></li>
+    <li><a href="#trouble">Troubleshooting</a></li>
+    <li><a href="#uninstall">Uninstalling</a></li>
+  </ol>
+</nav>
+
+<main>
+<div class="embed-bar"><select id="jump" aria-label="Go to section"></select></div>
+<div class="content">
+<header class="hero">
+  <h1>ZoneSnap user guide</h1>
+  <p class="lede">ZoneSnap splits an ultrawide monitor into zones and snaps windows into them, for work and play. Workspaces switch whole setups with one hotkey: say Work, Streaming and Gaming. In gaming mode your game sits in the middle at a proper 21:9 or 16:9 size, borderless, with the cursor locked to it and chat, music or a guide in panes on either side, and a game can have its own layout, like 4:3 for a retro title.</p>
+</header>
+
+<section id="start">
+  <h2>Getting started</h2>
+  <p>ZoneSnap lives in the system tray, at the bottom right of your screen (you may need to click the <strong>^</strong> arrow to see it). The first time it runs it looks at your monitor, creates a starting layout and opens its window with a short welcome. On a 3840 × 1080 monitor, for example, you get a 2560-wide game zone in the middle with a 640-wide pane on each side.</p>
+  <figure><img src="{{img:welcome}}" alt="The ZoneSnap window's General page with the first-run welcome message" width="1100" height="720" loading="lazy"><figcaption>The ZoneSnap window. The sidebar has its five pages (Zones, Workspaces, Apps, General and Hotkeys) and the User guide button.</figcaption></figure>
+  <h3>Your first five minutes</h3>
+  <ol class="steps">
+    <li><strong>Snap a window.</strong> Hold <kbd>Alt</kbd>, press the left mouse button anywhere inside a window and drag it. The zones light up; let go over one and the window fills it exactly.</li>
+    <li><strong>Adjust the zones</strong> if you like. Press <kbd>Ctrl+Alt+Z</kbd> and drag the handles between zones on the picture of your monitor.</li>
+    <li><strong>Tell ZoneSnap about your side apps.</strong> Press <kbd>Ctrl+Alt+G</kbd> to switch gaming mode on, put Discord, Spotify or anything else in a side zone, click it, and press <kbd>Ctrl+Alt+A</kbd>; it's added to gaming mode. Do the same with your game in the middle zone, so ZoneSnap knows it's a game. Press <kbd>Ctrl+Alt+G</kbd> again to switch gaming mode off.</li>
+    <li><strong>Play.</strong> Start the game, or press <kbd>Ctrl+Alt+G</kbd>. Gaming mode opens your side apps in their zones, makes the game borderless, hides the taskbar, keeps the mouse inside the game and dims the side panes.</li>
+    <li><strong>Start with Windows.</strong> On the General page, turn on <strong>Start with Windows</strong> so ZoneSnap is always ready.</li>
+  </ol>
+  <div class="note embed-only"><b>Reading this inside ZoneSnap</b>Click around ZoneSnap while you read: the guide jumps to the section for the page you're on (untick <strong>Follow pages</strong> to stop that), and <strong>Show in app</strong> next to a heading opens the page it describes. <kbd>F1</kbd> opens and closes this panel.</div>
+  <div class="note"><b>About the keys in this guide</b>The shortcuts shown here are the defaults. You can change any of them on the Hotkeys page (see <a href="#hotkeys">Hotkeys</a>); if you have, use yours.</div>
+</section>
+
+<section id="install">
+  <h2>Installing and updating</h2>
+  <h3>What you need</h3>
+  <ul>
+    <li>Windows 10 or 11.</li>
+    <li>The Microsoft Edge WebView2 runtime, which draws the ZoneSnap window. It's built into Windows 11 and up-to-date Windows 10. Without it, zones, gaming mode and your shortcuts still work from the tray icon, but the ZoneSnap window can't open.</li>
+  </ul>
+  <h3>Installing</h3>
+  <ol class="steps">
+    <li>Make a folder of its own for ZoneSnap, for example <code>Documents\ZoneSnap</code> or <code>Program Files\ZoneSnap</code>.</li>
+    <li>Put <code>ZoneSnap.exe</code> in it and double-click it. (If you have the script version instead, keep <code>ZoneSnap.ahk</code>, <code>ZoneSnap.ico</code>, <code>ui.html</code>, <code>guide.html</code> and the <code>src</code> and <code>Lib</code> folders together and double-click <code>ZoneSnap.ahk</code>. It needs AutoHotkey v2.)</li>
+    <li>Windows may warn that the app is from an unknown publisher; choose <strong>More info → Run anyway</strong>.</li>
+  </ol>
+  <p>Your settings are saved in your Windows user folder, in <code>%APPDATA%\ZoneSnap\profiles\&lt;your profile&gt;\ZoneSnap.ini</code>, so everyone who signs in to Windows has their own. <strong>Open settings file</strong> (General page → Advanced, or the tray menu) opens it. Before 0.37.0 the settings file sat next to ZoneSnap; the first start of 0.37.0 moves it into a profile named after your Windows user name and keeps the old file as <code>ZoneSnap.ini.old</code>.</p>
+  <h3>Updating</h3>
+  <p>ZoneSnap tells you when a new version is out (see <a href="#settings">Settings</a>). Choose <strong>Update now</strong>, in the banner on the General page or in the tray menu: ZoneSnap downloads the new version, checks it's the release's own file, replaces itself and restarts. Your settings carry over. If the check fails, the download is deleted and nothing changes.</p>
+  <p>The script version, or ZoneSnap.exe in a folder it can't save files in (like Program Files), opens the release page instead. To update by hand:</p>
+  <ol class="steps">
+    <li>Right-click the tray icon and choose <strong>Exit</strong>.</li>
+    <li>Replace <code>ZoneSnap.exe</code> with the new one (or, for the script version, the script files). Your settings are in your user folder, so nothing else needs copying.</li>
+    <li>Start ZoneSnap again. Everything you set up carries over.</li>
+  </ol>
+</section>
+
+<section id="snap">
+  <h2>Snapping windows</h2>
+  <p>There are three ways to put a window into a zone:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Do this</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td><kbd>Alt</kbd> + left-drag</td><td class="wrap-ok">Grab a window anywhere inside it, not just its title bar, and drag. Zones light up; let go over one to snap. This works on borderless games, which have no title bar to grab.</td></tr>
+      <tr><td><kbd>Shift</kbd> while dragging</td><td class="wrap-ok">Drag a window by its title bar as usual and hold Shift: the zones appear, and the window snaps where you let go.</td></tr>
+      <tr><td><kbd>Ctrl+Alt+1</kbd> to <kbd>9</kbd></td><td class="wrap-ok">Sends the active window straight to that zone.</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li>Zones are numbered from left to right as they appear on the Zones page; the number shows in the middle of each zone there.</li>
+    <li>If <kbd>Alt</kbd>-drag gets in the way of a game, change the drag key to Win + drag or Ctrl+Alt + drag on the General page.</li>
+    <li><strong>Games must run windowed or borderless.</strong> Nothing outside a game can move an exclusive-fullscreen window. See <a href="#games">Games</a>.</li>
+    <li>Some apps have a minimum window size and won't shrink to fit a narrow zone. See <a href="#apps">Apps for your side panes</a> for the fix.</li>
+  </ul>
+</section>
+
+<section id="zones">
+  <h2>Zones and the zone editor</h2>
+  <p>Every workspace has a layout:</p>
+  <ul>
+    <li>the <strong>Default</strong> layout, used for everyday work (whenever no other workspace is on),</li>
+    <li>the <strong>Gaming</strong> layout, used while gaming mode is on, and</li>
+    <li>a layout for each workspace of your own, which starts as a copy of Default until you save it.</li>
+  </ul>
+  <p>Snapping always uses whichever layout is active. The top line of the tray menu, and the tray icon's tooltip, tell you which one that is.</p>
+  <figure><img src="{{img:zones}}" alt="The Zones page: a 3840 by 1080 monitor with two stacked left zones, a 2560-wide game zone and a right zone, with presets underneath" width="1100" height="720" loading="lazy"><figcaption>The Zones page, editing the Gaming layout. The game zone is the large middle zone.</figcaption></figure>
+  <h3>Editing zones</h3>
+  <p>Press <kbd>Ctrl+Alt+Z</kbd>, or choose <strong>Edit zones</strong> from the tray menu.</p>
+  <ul>
+    <li>Pick from the <strong>Layout of</strong> menu at the top to choose which layout you're editing: Default, Gaming, one of your own workspaces, or a game with its own layout (shown as <em>Gaming · the game</em>). This doesn't change which one is active.</li>
+    <li><strong>Drag the handles</strong> between zones to resize them. Zones sharing an edge move together, so a stacked column stays lined up.</li>
+    <li><strong>Click a zone</strong> to type exact sizes, split it in two (top/bottom or left/right), make it the game zone, or remove it.</li>
+    <li><strong>Preview on screen</strong> shows the zones on your monitor for two seconds.</li>
+    <li><strong>Save</strong> applies them straight away. A workspace of your own uses the Default layout until you save one for it here; the first save gives it its own, and the Default layout isn't changed. <strong>Revert</strong> throws away unsaved changes.</li>
+  </ul>
+  <h3>Presets</h3>
+  <p>Presets are worked out from your monitor's resolution, so they suit whatever screen you have:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Preset</th><th>What you get</th></tr></thead>
+    <tbody>
+      <tr><td>21:9 game</td><td class="wrap-ok">A standard ultrawide game in the middle with a pane either side: <em>Side | 2560 | Side</em> on a screen 1080 high, 3440 at 1440, 5120 at 2160.</td></tr>
+      <tr><td>16:9 game</td><td class="wrap-ok">A 16:9 game (1920 at 1080, 2560 at 1440) with wider side panes.</td></tr>
+      <tr><td>4:3 game</td><td class="wrap-ok">A classic 4:3 game (1440 at 1080) for older and retro titles.</td></tr>
+      <tr><td>Equal thirds</td><td class="wrap-ok">Three equal columns, handy for work.</td></tr>
+      <tr><td>Halves</td><td class="wrap-ok">Two equal columns, good for a second monitor.</td></tr>
+      <tr><td>70 / 30</td><td class="wrap-ok">A big zone on the left (the game zone) and a pane on the right: 2688 | 1152 on a 3840-wide screen.</td></tr>
+    </tbody>
+  </table></div>
+  <p>A preset only changes the picture; nothing happens to your windows until you click Save.</p>
+  <p>Every workspace is its own layout, so there's nothing else to keep track of. To try something out without losing a layout you like, <strong>Duplicate</strong> its workspace first, or export your layouts (General → Back up and share).</p>
+</section>
+
+<section id="workspaces">
+  <h2>Workspaces and gaming mode</h2>
+  <p>A <strong>workspace</strong> is a whole setup you switch on in one go: a layout, the apps to open and snap into it, and a few options. <strong>Gaming mode is the built-in Gaming workspace.</strong> You can add your own, such as <em>Work</em> or <em>Streaming</em>. One workspace is on at a time. <strong>Default</strong> is the workspace that's on whenever no other one is: switching a workspace off takes you back to it.</p>
+  <p>Each workspace has a card on the Workspaces page. Cards start closed, showing the workspace's name, whether it's on, and a one-line summary; click one to open its settings, and click again to close it. ZoneSnap remembers which ones you left open.</p>
+  <figure><img src="{{img:workspaces}}" alt="The Workspaces page with the Gaming workspace's options" width="1100" height="720" loading="lazy"><figcaption>The Workspaces page. Each workspace has its own card.</figcaption></figure>
+  <h3>Switching a workspace on and off</h3>
+  <ul>
+    <li><kbd>Ctrl+Alt+G</kbd> switches gaming mode on and off.</li>
+    <li>Your own workspaces can have a hotkey such as <kbd>Ctrl+Alt+F1</kbd>.</li>
+    <li>Press <kbd>Ctrl+Alt+Space</kbd> for the <strong>quick switcher</strong>: a list of your workspaces pops up at the mouse, with the active one marked. Press a workspace's number, or use the arrow keys and <kbd>Enter</kbd>, or click it. <kbd>Esc</kbd> (or clicking elsewhere) closes it. It works mid-game too.</li>
+    <li>Or use <strong>Switch on</strong> on its card, or the tray menu's <strong>Workspaces</strong> submenu.</li>
+  </ul>
+  <h3>Renaming, copying and ordering workspaces</h3>
+  <ul>
+    <li>Open a workspace's card and click <strong>Rename</strong>. Its hotkey, apps and layout go with it. Gaming mode keeps its name.</li>
+    <li><strong>Duplicate</strong> starts a new workspace as a copy: the same options, the same app places, and its own copy of the layout (so changing one doesn't change the other). The copy has no hotkey until you give it one.</li>
+    <li>Drag a card by the dots on its left to put your workspaces in the order you want, or click the dots and press the <kbd>Up</kbd> and <kbd>Down</kbd> arrow keys. The Zones page, the Apps page, the tray menu and the quick switcher follow the same order. Default always comes first.</li>
+  </ul>
+  <h3>What a workspace can do</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Option</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td>Layout</td><td class="wrap-ok">Each workspace has its own. Gaming uses the Gaming layout, or a game's own layout while that game runs. Your own workspaces use the Default layout until you save one for them. <strong>Edit layout</strong>, at the bottom of the card, opens it on the Zones page.</td></tr>
+      <tr><td>Game zone</td><td class="wrap-ok">The zone your game goes in. Cursor lock keeps to it and dimming leaves it bright. Choose None for a workspace that isn't for gaming.</td></tr>
+      <tr><td>Auto-hide the taskbar</td><td class="wrap-ok">Hides the taskbar while the workspace is on, and puts your own setting back afterwards.</td></tr>
+      <tr><td>Lock the cursor</td><td class="wrap-ok">Keeps the mouse inside the game zone while you play. See <a href="#cursor">Cursor lock</a>.</td></tr>
+      <tr><td>Dim the other zones</td><td class="wrap-ok">Darkens every zone except the game. See <a href="#dim">Dimming</a>.</td></tr>
+      <tr><td>Hotkey</td><td class="wrap-ok">The shortcut that switches it on and off. Gaming mode's is set on the Hotkeys page.</td></tr>
+      <tr><td>Games</td><td class="wrap-ok">Gaming only: <strong>Auto gaming mode</strong> and <strong>Make games borderless</strong>, which takes the title bar and frame off your games while gaming mode is on. See <a href="#games">Games</a>.</td></tr>
+      <tr><td>Apps</td><td class="wrap-ok">Opened and snapped into their zones when the workspace switches on. <strong>Edit apps</strong> opens them on the Apps page.</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Switching between workspaces</h3>
+  <p>When you switch straight from one workspace to another, <strong>When switching between workspaces</strong> decides what happens to the apps the first one opened: leave them open, minimise them, or close them. Games, and apps the new workspace also uses, are never touched.</p>
+  <h3>Going back to Default</h3>
+  <p>When a workspace switches off and you're back on Default, apps you've given a Default zone (see <a href="#apps">Where apps go on Default</a>) go to that zone, and apps set to <strong>Leave where it is</strong> in Default stay where the workspace left them. ZoneSnap puts your other windows (the ones set to <strong>Put back</strong>) back where they were before it switched on: the same zone, or the same spot if a window wasn't in one, maximised or minimised as it was. Apps the workspace opened itself move to the Default zone covering their spot, so nothing is left in a gaming-sized gap. Apps the workspace itself set to <strong>Open, don't move</strong>, and games, are left where they are.</p>
+  <h3>Auto gaming mode</h3>
+  <p>With <strong>Auto gaming mode</strong> on (on the Gaming card, or ticked in the tray menu), gaming mode switches on by itself when a game you've added starts, and goes back to whatever you had before when the game closes. If you switch gaming mode off by hand mid-game, ZoneSnap leaves it off.</p>
+  <p>Games you add with <kbd>Ctrl+Alt+A</kbd> in the game zone are detected automatically. To detect a game without snapping it, use <strong>Add a game</strong> under <strong>Game layouts</strong> on the Apps page (Gaming).</p>
+</section>
+
+<section id="apps">
+  <h2>Apps for your side panes</h2>
+  <p>ZoneSnap keeps one list of your apps, shared by every workspace. For each workspace you choose where it puts each app: a zone, <strong>Open, don't move</strong> (opened if it isn't running, but left where it is), or <strong>Don't open</strong> (not part of that workspace). When a workspace switches on, it opens the apps it uses and snaps them into their zones; apps that are already open are just moved into place.</p>
+  <h3>Adding an app</h3>
+  <ol class="steps">
+    <li>Open the app and put it in the zone you want it in (or leave it outside the zones, for Open, don't move).</li>
+    <li>Click the app and press <kbd>Ctrl+Alt+A</kbd>. It goes on the list for every workspace.</li>
+  </ol>
+  <p>With a workspace on (<kbd>Ctrl+Alt+G</kbd> for gaming mode), the app is also placed in that workspace, in the zone it's in. With Default on, it gets that Default zone instead and isn't used by any workspace until you place it on the Apps page.</p>
+  <h3>Moving apps between zones</h3>
+  <p>Pick a workspace from the menu at the top of the Apps page. <strong>Where each app goes</strong> shows its zones on a picture of your monitor, with each app sitting in its zone, and two dashed strips underneath: <strong>Open, don't move</strong> and <strong>Don't open</strong>, which holds every other app on your list. <strong>Drag an app onto a zone or a strip</strong> to change where it goes. If the workspace is on, the app's window moves straight away.</p>
+  <figure><img src="{{img:apps}}" alt="The Apps page: a map of the Gaming layout's zones with Spotify, Discord and a game in their zones, and the list of apps below" width="1100" height="720" loading="lazy"><figcaption>The Apps page for the Gaming workspace. Drag the apps between zones in the map; the list underneath shows the same apps.</figcaption></figure>
+  <p>Below the map, the list shows every app, with a menu for its zone in this workspace. Its buttons rename the app, edit the command that opens it, or remove it. Names and commands are shared, so a change shows in every workspace; <strong>Remove</strong> takes the app off the list everywhere (to take it out of just this workspace, choose Don't open). Clicking an app in the map takes you to its row. An app whose zone doesn't exist in this layout appears under the map, ready to drag into one.</p>
+  <h3>Apps that shouldn't move</h3>
+  <p>Set an app's zone to <strong>Open, don't move</strong> (or drag it into that dashed strip under the map) and the workspace leaves its window wherever it is. If it isn't running when the workspace switches on and it has a command, the workspace still opens it. Use this for something like Steam that you keep on one side of the screen all the time and don't want gaming mode to touch. An app you add with <kbd>Ctrl+Alt+A</kbd> while it isn't in a zone starts out as Open, don't move.</p>
+  <h3>Games, launchers and apps in the game zone</h3>
+  <p>An app you add in the Gaming layout's game zone counts as a game: auto gaming mode starts when it runs, gaming mode makes it borderless, and ZoneSnap never launches it. Game launchers and stores (Steam, the Epic Games Launcher, Battle.net, GOG Galaxy, the EA app, Ubisoft Connect, the Riot Client, the Xbox app and others) are the exception: they're open most of the time, so they're treated as ordinary apps even in the game zone.</p>
+  <p>Next to an app in the game zone, <strong>Not a game?</strong> or <strong>Treat as a game</strong> changes this. It's on the games in the Game layouts list too.</p>
+  <h3>Renaming an app</h3>
+  <p>ZoneSnap names apps after their program (<code>OUTLOOK.EXE</code>) or, for web apps, their website. Some web apps get a meaningless name, such as a Firefox web app showing as <code>5e79188c</code>. Click an app's <strong>Rename</strong> button (the first of the buttons at the end of its row), type a name and press <kbd>Enter</kbd>. The name is the app's, so it shows in every workspace and in the Default view. <strong>Reset</strong> goes back to the automatic name. Games can be renamed the same way, here or under Game layouts, and the name shows in both places.</p>
+  <h3>Where apps go on Default</h3>
+  <p>The Apps page opens on <strong>Default</strong>. Pick it from the Workspace menu at the top of the Apps page to choose where your apps go when you're back on Default, after gaming mode or another workspace switches off. The map shows your Default zones with every app on your list; drag each one into the zone it should go to, or pick the zone from its menu in the list.</p>
+  <figure><img src="{{img:apps_normal}}" alt="The Apps page's Default view: Spotify in zone 1, Outlook in zone 2, and the Leave where it is and Put back strips under the map" width="890" height="560" loading="lazy"><figcaption>The Default view. It has the same two strips as every workspace.</figcaption></figure>
+  <p>Default has two strips under the map too. <strong>Leave where it is</strong> keeps an app wherever the other workspace left it. <strong>Put back</strong>, where apps start, sends an app back to the zone or spot it was in before the other workspace switched on (see <a href="#workspaces">Going back to Default</a>). Drag apps between the zones and strips, or use the menu on each row. Each row says which other workspaces use the app. An app you add with <kbd>Ctrl+Alt+A</kbd> while Default is on goes into the Default zone it's in, or Leave where it is if it isn't in one. If Default is on, a change moves the window straight away.</p>
+  <h3>Discord, Spotify and other apps that won't shrink</h3>
+  <p>The desktop versions of Discord and Spotify have a minimum window size that's too wide for a narrow side pane. Their web versions, opened as app windows in Microsoft Edge, don't have that limit and have no browser toolbar:</p>
+  <ol class="steps">
+    <li>Open <code>https://discord.com/app</code> (or <code>https://open.spotify.com</code>) in Edge and sign in.</li>
+    <li>In Edge's menu choose <strong>Apps → Install this site as an app</strong>.</li>
+    <li>Open the installed app (from the Start menu or its taskbar pin), put it in its zone and press <kbd>Ctrl+Alt+A</kbd>. ZoneSnap finds the app in Windows' app list and opens it the way the Start menu does (<code>explorer.exe shell:AppsFolder\…</code>), so there's nothing to type.</li>
+  </ol>
+  <p>If ZoneSnap can't find the app, it asks for the command and shows the window's app ID. That usually means the window you added isn't the installed app: open the app from its taskbar pin or the Start menu and add it again.</p>
+  <div class="note"><b>Opens, but isn't snapped?</b>A command with <code>--app=https://…</code> opens the website in a new Edge window, not the installed app, and Windows treats that as a different app, so ZoneSnap can't find it to snap it. The Apps page marks these rows: click <strong>Use the installed app</strong> to switch to the installed app. ZoneSnap also does this by itself when it starts, for any web app it can find in Windows' app list.</div>
+  <div class="note warn"><b>Two things to know</b>Discord's web version only supports push-to-talk while its window is focused. Firefox's web apps don't work for side panes: their toolbar can't be hidden and they have a large minimum size.</div>
+</section>
+
+<section id="games">
+  <h2>Games</h2>
+  <h3>Windowed and borderless</h3>
+  <p>Set your game to <strong>borderless</strong> or <strong>windowed</strong> in its own video settings, ideally at your game zone's size (2560 × 1080 on a 3840 × 1080 monitor) so it isn't stretched. Exclusive fullscreen can't be moved by anything outside the game.</p>
+  <h3>Borderless in gaming mode</h3>
+  <p>Some games only offer windowed mode with a title bar and frame. While gaming mode is on, ZoneSnap takes the title bar and frame off every game you've added and fits it to the game zone, like the Borderless Gaming app. If the game puts its frame back (after a resolution change, say), ZoneSnap takes it off again, and if the game resizes itself (some do once they've finished loading, as if they still had a frame), ZoneSnap gives the frame back for a moment, takes it off again and puts the game back. Snapping the game somewhere else, or dropping it somewhere with <kbd>Alt</kbd>-drag, moves the spot it's kept in. A game that keeps changing its own size is left alone after 5 tries in 10 seconds, until gaming mode starts again. When gaming mode switches off, the frame comes back. To keep frames on, turn off <strong>Make games borderless</strong> on the Gaming card of the Workspaces page.</p>
+  <h3>Borderless outside gaming mode</h3>
+  <p>To take the frame off a game (or any window) at other times, click it and press <kbd>Ctrl+Alt+B</kbd>; press it again to put the frame back.</p>
+  <h3>Your games</h3>
+  <p><strong>Game layouts</strong> on the Apps page (pick Gaming from the Workspace menu) lists every game ZoneSnap watches for. Games you add with <kbd>Ctrl+Alt+A</kbd> in the game zone appear there; <strong>Add a game</strong> adds one without putting it in a zone (type its <code>.exe</code> name or pick a program that's running). <strong>Not a game?</strong> takes one off the list.</p>
+  <h3>A layout for each game</h3>
+  <p>Under <strong>Game layouts</strong>, each game has a <strong>Layout</strong> menu. Choose <strong>Its own layout</strong> and the game gets a copy of the Gaming layout to change, for example into a 4:3 layout for a retro game; <strong>Edit</strong> opens it on the Zones page. Whenever gaming mode starts while that game is running, ZoneSnap uses the game's layout instead of the Gaming layout, and your side apps go to the zones covering their usual spots. Choosing <strong>Gaming layout</strong> again deletes the game's own.</p>
+  <div class="note"><b>Games running as administrator</b>If a game runs as administrator, ZoneSnap can only move it when it's running as administrator too: tray menu → <strong>Restart as administrator</strong>.</div>
+</section>
+
+<section id="cursor">
+  <h2>Cursor lock</h2>
+  <p>On a wide screen it's easy to fling the mouse off the game mid-fight. With cursor lock on, the mouse stays inside the game zone while you play, so it can't land on a side pane or bring up the taskbar.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>State</th><th>Where the mouse can go</th><th>How you get there</th></tr></thead>
+    <tbody>
+      <tr><td>Locked</td><td class="wrap-ok">Only inside the game zone</td><td class="wrap-ok">Click on the game</td></tr>
+      <tr><td>Free</td><td class="wrap-ok">Anywhere</td><td class="wrap-ok">Leave the game: <kbd>Windows</kbd> key, <kbd>Alt+Tab</kbd>, or <kbd>Ctrl+Alt+F</kbd></td></tr>
+      <tr><td>Off</td><td class="wrap-ok">Anywhere</td><td class="wrap-ok"><kbd>Ctrl+Alt+L</kbd>, or switch the workspace off</td></tr>
+    </tbody>
+  </table></div>
+  <ul>
+    <li><strong>Leaving the game works as normal.</strong> Press the Windows key or Alt+Tab and the mouse is free to go anywhere. It stays free until you click back into the game.</li>
+    <li><strong><kbd>Ctrl+Alt+F</kbd></strong> frees the mouse without opening Start and moves to the side pane you used last, for example to skip a song. Press it again to jump back into the game.</li>
+    <li><strong>Pop-ups can't pull you out.</strong> If something takes over while you're playing (a Steam message window, a notification, or Windows switching to the taskbar), ZoneSnap puts the game straight back in front and keeps the mouse locked. The game's own windows, such as a quit prompt, are let through, and so is a window that keeps trying.</li>
+    <li>Moving a window with <kbd>Alt</kbd>-drag releases the lock while you drag.</li>
+  </ul>
+</section>
+
+<section id="dim">
+  <h2>Dimming side panes</h2>
+  <p>Dimming darkens every zone except the game, so the side panes don't distract you. You can still see and click through them. <kbd>Ctrl+Alt+D</kbd> turns it on or off; set how dark on the General page.</p>
+  <p>A pane brightens while the mouse is over it or while you're using a window in it. To keep one bright, for example a guide you're following:</p>
+  <ul>
+    <li>hover over it and click the <strong>pin</strong> button at its top centre (this doesn't take you out of the game),</li>
+    <li>point at it and press <kbd>Ctrl+Alt+U</kbd>, or</li>
+    <li>press <kbd>Ctrl+Alt+Shift</kbd> and its zone number, without touching the mouse.</li>
+  </ul>
+  <p>Panes kept lit go back to normal when the workspace switches off.</p>
+</section>
+
+<section id="taskbar">
+  <h2>The taskbar</h2>
+  <ul>
+    <li><strong>Zones fit around it.</strong> When the taskbar is showing, zones shrink to fit beside it. When it's hidden, they use the whole screen, and your snapped windows follow.</li>
+    <li><strong>Auto-hide while you play.</strong> A workspace can hide the taskbar while it's on and put your setting back afterwards. With cursor lock on, the mouse can't reach the screen edge, so the taskbar won't pop up.</li>
+    <li><strong>Flashing apps don't bring it up.</strong> When an app wants attention, such as a new Steam or Discord message, Windows normally slides a hidden taskbar up. ZoneSnap stops that while a workspace is hiding the taskbar. The app's own notifications still work.</li>
+    <li><strong>Taskbar on the side of the screen?</strong> ZoneSnap notices. A taskbar on the left or right sits beside a side pane rather than under your game, so ZoneSnap leaves it showing and the Auto-hide switch is greyed out. Your game zone keeps its exact size and place (a 2560-wide game stays 2560 wide); the pane between it and the taskbar gets narrower instead.</li>
+  </ul>
+  <div class="note"><b>Tip</b>Windows' <strong>Do not disturb</strong> (Windows 11) or <strong>Focus assist</strong> (Windows 10) stops most pop-ups at the source while you play.</div>
+</section>
+
+<section id="monitors">
+  <h2>Multiple monitors</h2>
+  <p>Zones can be on any monitor, and zone numbers run across all of them. With more than one monitor, the Zones page shows them in their Windows arrangement: click one to edit its zones, and the presets fit that monitor.</p>
+  <ul>
+    <li>Move a monitor in Windows' display settings and its zones go with it.</li>
+    <li>Change a monitor's resolution and its zones scale to match.</li>
+    <li>Unplug a monitor and its zones move onto another one for now, then go back when it's plugged in again.</li>
+  </ul>
+</section>
+
+<section id="hotkeys">
+  <h2>Hotkeys</h2>
+  <p>These are the default shortcuts:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Shortcut</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><kbd>Ctrl+Alt+G</kbd></td><td class="wrap-ok">Gaming mode on or off</td></tr>
+      <tr><td><kbd>Ctrl+Alt+Z</kbd></td><td class="wrap-ok">Open ZoneSnap on the Zones page</td></tr>
+      <tr><td><kbd>Ctrl+Alt+1</kbd>–<kbd>9</kbd></td><td class="wrap-ok">Send the active window to that zone</td></tr>
+      <tr><td><kbd>Ctrl+Alt+Shift+1</kbd>–<kbd>9</kbd></td><td class="wrap-ok">Keep that zone lit while dimming is on (toggle)</td></tr>
+      <tr><td><kbd>Ctrl+Alt+L</kbd></td><td class="wrap-ok">Cursor lock on or off</td></tr>
+      <tr><td><kbd>Ctrl+Alt+F</kbd></td><td class="wrap-ok">Free the mouse from the game; press again to go back</td></tr>
+      <tr><td><kbd>Ctrl+Alt+D</kbd></td><td class="wrap-ok">Dimming on or off</td></tr>
+      <tr><td><kbd>Ctrl+Alt+U</kbd></td><td class="wrap-ok">Keep the pane under the mouse lit (toggle)</td></tr>
+      <tr><td><kbd>Ctrl+Alt+A</kbd></td><td class="wrap-ok">Add the active window to your app list and place it in the active workspace (in the game zone, as a game); with Default on, give it a Default zone</td></tr>
+      <tr><td><kbd>Ctrl+Alt+B</kbd></td><td class="wrap-ok">Remove or restore the active window's borders</td></tr>
+      <tr><td><kbd>Ctrl+Alt+Space</kbd></td><td class="wrap-ok">Quick switcher: pick a workspace from a list at the mouse</td></tr>
+      <tr><td>Your choice</td><td class="wrap-ok">Switch one of your own workspaces on or off</td></tr>
+      <tr><td><kbd>Alt</kbd> + left-drag</td><td class="wrap-ok">Move any window and snap it to a zone (change the key on the General page)</td></tr>
+    </tbody>
+  </table></div>
+  <h3>Changing a shortcut</h3>
+  <ol class="steps">
+    <li>Open the <strong>Hotkeys</strong> page (tray menu → <strong>Hotkeys…</strong>).</li>
+    <li>Click <strong>Change</strong> next to the shortcut.</li>
+    <li>Press the new keys together, for example <kbd>Ctrl+Shift+K</kbd>. Press <kbd>Esc</kbd> to cancel, or <kbd>Backspace</kbd> to leave it without a shortcut.</li>
+  </ol>
+  <figure><img src="{{img:hotkeys_rec}}" alt="The Hotkeys page waiting for new keys for Cursor lock" width="890" height="420" loading="lazy"><figcaption>Waiting for the new keys. ZoneSnap's own shortcuts are paused until you've pressed them.</figcaption></figure>
+  <ul>
+    <li>For the zone shortcuts (send to zone, keep zone lit) you choose the modifier keys, such as <kbd>Ctrl+Shift</kbd>; the numbers 1 to 9 are added for you.</li>
+    <li>ZoneSnap won't let two things share a key, tells you what's already using it, and refuses keys Windows keeps for itself, such as <kbd>Alt+Tab</kbd>.</li>
+    <li>A letter or number needs <kbd>Ctrl</kbd>, <kbd>Alt</kbd> or <kbd>Win</kbd> with it, or you couldn't type it any more. Function keys can be used on their own.</li>
+    <li><strong>Default</strong> next to a shortcut puts that one back; <strong>Reset shortcuts to defaults</strong> puts them all back.</li>
+  </ul>
+</section>
+
+<section id="settings">
+  <h2>Settings and the tray menu</h2>
+  <h3>The General page</h3>
+  <figure><img src="{{img:general}}" alt="The General page with profiles, Start with Windows, drag key, theme and accent colour" width="1100" height="720" loading="lazy"></figure>
+  <p>Changes on the General page save as you make them; the message at the bottom has an <strong>Undo</strong> for a few seconds.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Setting</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td>Profiles</td><td class="wrap-ok">Separate setups on this Windows account. See <a href="#profiles">Profiles</a> below.</td></tr>
+      <tr><td>Start with Windows</td><td class="wrap-ok">Starts ZoneSnap when you sign in to Windows, with the profile used last.</td></tr>
+      <tr><td>Drag to snap with</td><td class="wrap-ok">Which key you hold to drag windows: Alt, Win or Ctrl+Alt.</td></tr>
+      <tr><td>Theme</td><td class="wrap-ok">System follows Windows' light or dark mode; Light or Dark keeps ZoneSnap that way. It covers the ZoneSnap window, this guide and the tray menu.</td></tr>
+      <tr><td>Accent colour</td><td class="wrap-ok">ZoneSnap teal, your Windows accent colour, or Custom: pick one of nine colours, or <strong>Other…</strong> for any colour: the window and its title bar preview it as you choose, and nothing changes until you press <strong>Apply colour</strong> (Cancel or <kbd>Esc</kbd> puts yours back). It colours buttons, switches, highlights, the title bar and the drag highlight on your screen. If text on a colour would be hard to read, ZoneSnap deepens or lightens it a little. Each profile has its own, so two people can tell their profiles apart at a glance.</td></tr>
+      <tr><td>Dim darkness</td><td class="wrap-ok">How dark dimmed panes are.</td></tr>
+      <tr><td>Check for updates</td><td class="wrap-ok">Checks once a day for a new version and tells you about it; <strong>Check now</strong> asks straight away. Nothing is downloaded until you choose <strong>Update now</strong>, which installs it and restarts ZoneSnap; <strong>What's new</strong> opens the release page. (The script version shows <strong>Download</strong> instead.)</td></tr>
+      <tr><td>Back up and share</td><td class="wrap-ok">Export this profile's settings, or just its layouts, to a file; import one. See below.</td></tr>
+      <tr><td>Advanced</td><td class="wrap-ok">Click to open. <strong>Keep the cursor off the taskbar edge</strong>: how many pixels the mouse is kept from the taskbar's edge while the cursor is locked (raise it if a hidden taskbar still pops up). <strong>Open settings file</strong>, and <strong>Restart as administrator</strong>.</td></tr>
+    </tbody>
+  </table></div>
+  <h3 id="profiles">Profiles</h3>
+  <p>A <strong>profile</strong> is a complete, separate setup, so two people can share one Windows account without changing each other's zones, workspaces, apps or shortcuts. People with their own Windows accounts already have their own settings and don't need profiles.</p>
+  <ul>
+    <li><strong>New profile…</strong> (General page, or the tray menu's <strong>Profile</strong> submenu) asks for a name, then switches to it. A new profile starts as if ZoneSnap had just been installed: the first-run setup, and nothing carried over.</li>
+    <li><strong>Switch to</strong> (or pick one in the tray's Profile submenu) switches off any workspace, puts your windows back, and restarts ZoneSnap on the other profile.</li>
+    <li><strong>Rename</strong> and <strong>Delete</strong> are on each profile's row. You can't delete the profile in use.</li>
+  </ul>
+  <p>Whose profile is on shows at the top of the sidebar, under the ZoneSnap logo, on every page; click it to switch to another profile, add one or manage them. The window's title bar says it too ("ZoneSnap – User"), so it shows on the taskbar and in Alt+Tab, and with more than one profile so does the tray icon's tooltip. That way nobody plays in someone else's setup by mistake. Auto gaming mode follows the profile that's on.</p>
+  <h3>Backing up and sharing your settings</h3>
+  <p>Under <strong>Back up and share</strong> on the General page:</p>
+  <ul>
+    <li><strong>Export everything…</strong> saves all of this profile's settings (layouts, workspaces, apps, shortcuts and options) to a file you choose. Keep it as a backup, copy it to another PC, or import it into another profile to give it a copy of yours.</li>
+    <li><strong>Export layouts only…</strong> saves just your layouts (Default, Gaming, your workspaces' and your games'), for sharing with someone else. Your apps and shortcuts stay out of it.</li>
+    <li><strong>Import…</strong> opens a file and shows what it holds before anything changes. Choose <strong>Import everything</strong> (ZoneSnap restarts with the imported settings) or <strong>Layouts only</strong> (keeps your apps, workspaces and shortcuts; a workspace's layout comes in only if you have that workspace). Either way, your current settings are saved first as <code>ZoneSnap backup &lt;date&gt;.ini</code> in your profile's folder.</li>
+  </ul>
+  <div class="note warn"><b>Only import everything from a file you trust</b>A full settings file can hold app commands, which ZoneSnap runs when a workspace switches on. The import lists them first. Layouts only never brings in apps, so it's safe for a layout someone has shared.</div>
+  <p>Zones are saved relative to their monitor, so a shared layout fits a monitor the same size, and is scaled onto a different one.</p>
+  <h3>The tray menu</h3>
+  <p>Right-click the ZoneSnap icon for quick access to gaming mode, your workspaces, your profiles, cursor lock, dimming, auto gaming mode and every page of the ZoneSnap window. Ticks show what's on. Double-click the icon to open the ZoneSnap window.</p>
+  <p>When a new version is out, <strong>Update now to ZoneSnap …</strong> sits at the top. Further down: <strong>User guide</strong> (this page), <strong>Check for updates</strong>, <strong>Start with Windows</strong>, <strong>Open settings file</strong>, <strong>Restart as administrator</strong> and <strong>Exit</strong>.</p>
+</section>
+
+<section id="trouble">
+  <h2>Troubleshooting</h2>
+  <dl class="faq">
+    <dt>A window won't move or snap.</dt>
+    <dd>If it's a game, set it to windowed or borderless in its own settings; exclusive fullscreen can't be moved. If the app runs as administrator, choose <strong>Restart as administrator</strong> in the tray menu.</dd>
+    <dt>An app doesn't fill its zone.</dt>
+    <dd>It has its own minimum size. Use its web version as an Edge app (see <a href="#apps">Apps</a>), or give it a bigger zone.</dd>
+    <dt>The mouse locks to the wrong pane.</dt>
+    <dd>Check the workspace's <strong>Game zone</strong> on the Workspaces page matches the zone your game is in.</dd>
+    <dt>The taskbar still pops up while I play.</dt>
+    <dd>Raise <strong>Keep the cursor off the taskbar edge</strong> on the General page. If an app's flashing brings it up, also turn off <strong>Settings → Personalization → Taskbar → Taskbar behaviours → Show flashing on taskbar apps</strong> in Windows.</dd>
+    <dt>Alt-click does something in my game.</dt>
+    <dd>Change the drag key to Win or Ctrl+Alt on the General page.</dd>
+    <dt>A shortcut doesn't work.</dt>
+    <dd>Another app may already use that key, or a game running as administrator may be swallowing it (restart ZoneSnap as administrator). Check what it's set to on the Hotkeys page, or try a different key.</dd>
+    <dt>Apps open in the wrong zones in gaming mode.</dt>
+    <dd>Gaming mode uses the Gaming layout, which can differ from Default. Check both on the Zones page, or move the app to the right zone on the Apps page.</dd>
+    <dt>Gaming mode turns on whenever Steam (or another app) is open.</dt>
+    <dd>That app is being treated as a game. Click <strong>Not a game?</strong> next to it on the Apps page (Gaming), or in the Game layouts list. If it should open with gaming mode, give it a command with its edit button, since games are never launched.</dd>
+    <dt>Windows don't go back when gaming mode switches off.</dt>
+    <dd>Only apps the workspace uses are put back, and only when you return to Default (not when you switch straight to another workspace). Apps set to <strong>Open, don't move</strong> in that workspace stay where they are, and an app with a Default zone goes to that zone instead. Check both on the Apps page.</dd>
+    <dt>The update check says it can't find any releases.</dt>
+    <dd>GitHub only answers for public repositories, so the update check can't see releases while ZoneSnap's repository is private.</dd>
+    <dt>My settings are gone after updating to 0.37.0.</dt>
+    <dd>0.37.0 moves the settings file from next to ZoneSnap into your Windows user folder, as a profile named after your Windows user name. If you started ZoneSnap under a different Windows account first, that account got the settings: the old file is still next to ZoneSnap as <code>ZoneSnap.ini.old</code>, so import it (General → Import…) after renaming it to end in <code>.ini</code>.</dd>
+    <dt>The ZoneSnap window won't open.</dt>
+    <dd>ZoneSnap shows a message saying why. Usually the WebView2 runtime is missing (install it from Microsoft) or, for the script version, <code>ui.html</code>, the <code>src</code> folder or the <code>Lib</code> folder isn't next to the script. Zones, gaming mode and your shortcuts keep working from the tray icon meanwhile.</dd>
+  </dl>
+  <p>Still stuck? Please report it on the project's GitHub Issues page, with what you did and what happened.</p>
+</section>
+
+<section id="uninstall">
+  <h2>Uninstalling</h2>
+  <ol class="steps">
+    <li>On the General page, turn off <strong>Start with Windows</strong>.</li>
+    <li>Right-click the tray icon and choose <strong>Exit</strong>.</li>
+    <li>Delete the ZoneSnap folder (including any <code>ZoneSnap backup</code> files in it, unless you want to keep them), and <code>%LOCALAPPDATA%\ZoneSnap</code> (paste it into File Explorer's address bar), where ZoneSnap keeps the ZoneSnap window's files.</li>
+  </ol>
+  <p>If ZoneSnap was hiding the taskbar when you exited, it puts your own setting back first.</p>
+  <footer>ZoneSnap {{VERSION}} · MIT licence (see LICENSE). This guide ships with ZoneSnap. It opens beside the ZoneSnap window from the tray menu (<strong>User guide</strong>), the sidebar's User guide button, or <kbd>F1</kbd>.</footer>
+</section>
+</div>
+</main>
+</div>
+<script>
+// Inside the ZoneSnap window (guide.html?embed=1): section picker, "Show in app"
+// buttons, and messages from the app ({zs:"theme"}, {zs:"section"}).
+(function () {
+  if (!new URLSearchParams(location.search).has("embed")) return;
+  document.documentElement.classList.add("embed");
+  var SHOW = { zones: "zones", workspaces: "workspaces", apps: "apps", games: "apps", cursor: "workspaces", dim: "general",
+    taskbar: "workspaces", monitors: "zones", hotkeys: "hotkeys", settings: "general", start: "general" };
+  var NAMES = { zones: "Zones", workspaces: "Workspaces", apps: "Apps", general: "General", hotkeys: "Hotkeys" };
+  var jump = document.getElementById("jump");
+  var sections = [].slice.call(document.querySelectorAll("section[id]"));
+  sections.forEach(function (sec, i) {
+    var h = sec.querySelector("h2");
+    var o = document.createElement("option");
+    o.value = sec.id; o.textContent = (i + 1) + "  " + h.textContent;
+    jump.appendChild(o);
+    var pg = SHOW[sec.id];
+    if (pg) {
+      var b = document.createElement("button");
+      b.className = "show"; b.type = "button"; b.textContent = "Show in app";
+      b.title = "Open the " + NAMES[pg] + " page in ZoneSnap";
+      b.addEventListener("click", function () { parent.postMessage({ zs: "show", page: pg }, "*"); });
+      h.appendChild(b);
+    }
+  });
+  function go(id, instant) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: instant ? "instant" : "smooth", block: "start" });
+    jump.value = id;
+  }
+  jump.addEventListener("change", function () { go(jump.value); });
+  // keep the picker on the section being read: the last one whose top has passed the bar
+  var ticking = false;
+  window.addEventListener("scroll", function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      var cur = sections[0].id;
+      sections.forEach(function (s) { if (s.getBoundingClientRect().top <= 90) cur = s.id; });
+      jump.value = cur;
+    });
+  }, { passive: true });
+  window.addEventListener("message", function (e) {
+    var d = e.data;
+    if (!d || typeof d !== "object" || e.source !== parent) return;
+    if (d.zs === "theme") document.documentElement.dataset.theme = d.dark ? "dark" : "light";
+    else if (d.zs === "section") go(d.id, d.instant);
+  });
+})();
+</script>
+</body>
+</html>

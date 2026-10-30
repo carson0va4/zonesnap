@@ -1,0 +1,72 @@
+name: Something isn't working
+description: A window won't snap, a setting doesn't stick, gaming mode misbehaves...
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting it. The user guide's **Troubleshooting** section (F1 in the ZoneSnap window) covers the common problems, so it's worth a quick look first.
+  - type: input
+    id: version
+    attributes:
+      label: ZoneSnap version
+      description: Shown at the bottom of the ZoneSnap window's sidebar, e.g. 0.37.2
+      placeholder: "0.37.2"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Which version do you run?
+      options:
+        - ZoneSnap.exe
+        - The script (ZoneSnap.ahk with AutoHotkey v2)
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      description: Settings → System → About, e.g. Windows 11 24H2
+    validations:
+      required: true
+  - type: input
+    id: monitors
+    attributes:
+      label: Your monitor(s)
+      description: Resolution of each, and where the taskbar is, e.g. 3840 × 1080, taskbar at the bottom
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead. Screenshots help.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to make it happen again
+      placeholder: |
+        1. Switch gaming mode on
+        2. Start the game
+        3. ...
+  - type: textarea
+    id: apps
+    attributes:
+      label: Apps or games involved
+      description: For example Discord as an Edge app, Steam, the game's name, and whether it runs as administrator
+  - type: textarea
+    id: settings
+    attributes:
+      label: Settings file (optional)
+      description: General → Advanced → Open settings file. Paste the parts that matter, and remove anything personal first (app commands can include folder paths with your name).
+      render: ini
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you send it
+      options:
+        - label: I've checked the Troubleshooting section of the user guide
+          required: true

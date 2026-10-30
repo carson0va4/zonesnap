@@ -1,0 +1,24 @@
+# Dependabot opens a pull request when something the repo depends on has a new version:
+# the actions in .github/workflows (weekly) and the Python tools behind the tests and
+# screenshots in tools/requirements.txt (monthly). The app itself has no packages to update.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "Build"
+
+  - package-ecosystem: pip
+    directory: /tools
+    schedule:
+      interval: monthly
+    groups:
+      tools:
+        patterns: ["*"]
+    commit-message:
+      prefix: "Tools"
