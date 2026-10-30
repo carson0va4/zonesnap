@@ -99,7 +99,7 @@ GitHub does this too. Every pull request into `main`, and every merge to `main`,
 - **Checks:** static checks of the AutoHotkey code, repository checks and the window tests (see [tests](tests/README.md)).
 - **Build:** loads the script under AutoHotkey v2 on Windows and compiles `ZoneSnap.exe`, kept with the run for 14 days.
 
-To draft a release of the current version, with the .exe, the script zip and that version's changelog, run the workflow by hand on `main` with **Draft a release** ticked. Drafts are private until you publish them.
+To draft a release of the current version, with the .exe, the script zip, the changelog since the last published release and each file's SHA-256, run the workflow by hand on `main` with **Draft a release** ticked. Drafts are private until you publish them.
 
 ## Making a change
 

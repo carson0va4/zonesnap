@@ -6,8 +6,8 @@
 #
 # Releases: run this workflow by hand on main with "Draft a release" ticked. Once Checks and
 # Build pass, that drafts a GitHub pre-release
-# for ZS_VERSION with the .exe and the script zip attached and that version's CHANGELOG section
-# as its notes. Drafts are only visible to you until you publish them; publishing creates the
+# for ZS_VERSION with the .exe and the script zip attached, and as its notes the CHANGELOG since
+# the last published release and each file's SHA-256. Drafts are only visible to you until you publish them; publishing creates the
 # tag. A version that already has a release is left alone.
 name: Build
 
@@ -189,13 +189,14 @@ jobs:
           # series (0.37.3 -> 0.37.3, 0.37.2, 0.37.1 and 0.37.0).
           LAST=$(gh release list --exclude-drafts --limit 100 --json tagName --jq '.[0].tagName // ""')
           LAST=${LAST#v}
-          SERIES="## ${VERSION%.*}."
-          awk -v h="## $VERSION" -v stop="## $LAST" -v series="$SERIES" -v none="$([ -z "$LAST" ] && echo 1)" \
-            '$0 == h {on=1; print; next}
-             on && /^## / && ((none && index($0, series) != 1) || (!none && $0 == stop)) {exit}
+          awk -v h="## [$VERSION]" -v stop="## [$LAST]" -v series="## [${VERSION%.*}." -v none="$([ -z "$LAST" ] && echo 1)" \
+            'index($0, h) == 1 {on=1; print; next}
+             on && /^## / && ((none && index($0, series) != 1) || (!none && index($0, stop) == 1)) {exit}
              on' CHANGELOG.md > notes.md
           grep -q . notes.md || { echo "::error title=Release::No CHANGELOG section for $VERSION"; exit 1; }
           if [ "$(grep -c '^## ' notes.md)" = 1 ]; then sed -i 1d notes.md; fi      # one version: no heading
+          # House style: a SHA-256 with each download (Update now checks the digest GitHub publishes).
+          { echo; echo "**SHA-256**"; sha256sum ZoneSnap.exe "ZoneSnap-$VERSION-script.zip" | awk '{print "- `" $2 "`: `" $1 "`"}'; } >> notes.md
           echo "::notice title=Release notes::$(grep '^## ' notes.md | tr '\n' ' ' | sed 's/## //g')since ${LAST:-the start of ${VERSION%.*}}"
           if gh release view "v$VERSION" >/dev/null 2>&1; then
             echo "::warning title=Release::v$VERSION already has a release - left alone"; exit 0

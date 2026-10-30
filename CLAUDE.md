@@ -26,7 +26,7 @@ Notes for Claude sessions working in this repository (people: see README.md).
   and `version:` in `ui.html`'s demo data.
 - Licence: the standard MIT licence (`LICENSE`, kept as the exact standard text so GitHub
   recognises it). Keep it in the script zip, and keep the third-party licences in `Lib`.
-- Keep the docs current with every change: `CHANGELOG.md` (Added / Changed / Fixed / Removed),
+- Keep the docs current with every change: `CHANGELOG.md` (`## [X.Y.Z] - YYYY-MM-DD`, then Added / Changed / Fixed / Removed),
   `README.md`, the user guide (`docs/guide/guide.src.html`), then `python tools/screenshots.py`
   to retake the pictures and rebuild `guide.html`. Don't edit `guide.html` by hand.
 - Run `python tests/static_check.py` and `python -m pytest tests` before pushing the branch

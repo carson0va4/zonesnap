@@ -50,7 +50,7 @@
 Persistent
 ;@Ahk2Exe-SetName ZoneSnap
 ;@Ahk2Exe-SetDescription ZoneSnap - window zones for ultrawide monitors - for work and play
-;@Ahk2Exe-SetVersion 0.39.3
+;@Ahk2Exe-SetVersion 0.39.4
 ;@Ahk2Exe-SetCopyright Copyright (c) 2026 carson0va4 - MIT licence
 ;@Ahk2Exe-SetMainIcon ZoneSnap.ico
 
@@ -76,7 +76,7 @@ global PinVis       := []
 global PinTexts     := []
 global OverlayInset := 8           ; gap around drag overlays so neighbouring zones read as separate
 global AccentHex    := "3CC5B0"       ; drag overlay highlight: house GuideAccent, or your accent's highlight shade
-global ZS_VERSION   := "0.39.3"   ; 0.x = beta; 1.0.0 once it is tested and stable
+global ZS_VERSION   := "0.39.4"   ; 0.x = beta; 1.0.0 once it is tested and stable
 global ZS_REPO      := "carson0va4/zonesnap"   ; where releases are published (update check)
 global UiGui := "", UiCtl := "", UiView := "", UiToken := 0, UiStarting := false
 global UiPendingPage := "general", UiWelcome := ""
