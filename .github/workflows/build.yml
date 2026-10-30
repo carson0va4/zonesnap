@@ -84,31 +84,44 @@ jobs:
           "version=$v" >> $env:GITHUB_OUTPUT
           Write-Host "ZoneSnap $v"
 
+      # Pinned: these exact GitHub releases, checked by SHA-256 and by each exe's version, so a new
+      # AutoHotkey can't change the build unannounced. To update, change all six values together
+      # (a run with a SHA-256 left empty prints the download's hash in a notice, then fails).
       - name: Get AutoHotkey v2 and Ahk2Exe
         env:
           GH_TOKEN: ${{ github.token }}
+          AHK_TAG: v2.0.31
+          AHK_VERSION: 2.0.31
+          AHK_SHA256: ""
+          AHK2EXE_TAG: Ahk2Exe1.1.37.02a2
+          AHK2EXE_VERSION: 1.1.37.02a2
+          AHK2EXE_SHA256: ""
         run: |
           # errors become annotations on the run, so they show without opening the log
           trap { Write-Output "::error title=Getting AutoHotkey::$($_.Exception.Message)"; exit 1 }
           New-Item -ItemType Directory -Force tools | Out-Null
-          try {
-            Invoke-WebRequest https://www.autohotkey.com/download/ahk-v2.zip -OutFile tools\ahk.zip -UserAgent "Mozilla/5.0"
-          } catch {
-            Write-Output "::warning title=autohotkey.com::$($_.Exception.Message) - trying GitHub instead"
-            gh release download --repo AutoHotkey/AutoHotkey --pattern "AutoHotkey_2*.zip" --output tools\ahk.zip
-            if ($LASTEXITCODE -ne 0) { throw "Couldn't download AutoHotkey v2 from autohotkey.com or GitHub" }
+          function Get-Pinned($repo, $tag, $pattern, $out, $sha) {
+            gh release download $tag --repo $repo --pattern $pattern --output $out
+            if ($LASTEXITCODE -ne 0) {
+              $names = gh release view $tag --repo $repo --json assets --jq '[.assets[].name] | join(", ")'
+              throw "Couldn't download $pattern from $repo $tag (assets: $names)"
+            }
+            $hash = (Get-FileHash $out -Algorithm SHA256).Hash.ToLowerInvariant()
+            if (-not $sha) { Write-Output "::notice title=$repo $tag::SHA-256 $hash"; $script:unpinned += " $repo"; return }
+            if ($hash -ne $sha.ToLowerInvariant()) { throw "$repo $tag download has SHA-256 $hash, expected $sha" }
           }
+          $unpinned = ""
+          Get-Pinned AutoHotkey/AutoHotkey $env:AHK_TAG "AutoHotkey_2*.zip" tools\ahk.zip $env:AHK_SHA256
+          Get-Pinned AutoHotkey/Ahk2Exe $env:AHK2EXE_TAG "Ahk2Exe*.zip" tools\ahk2exe.zip $env:AHK2EXE_SHA256
+          if ($unpinned) { throw "No SHA-256 pinned for$unpinned (see the notices for the hashes)" }
           Expand-Archive tools\ahk.zip tools\ahk
-          gh release download --repo AutoHotkey/Ahk2Exe --pattern "Ahk2Exe*.zip" --output tools\ahk2exe.zip
-          if ($LASTEXITCODE -ne 0) {
-            $names = gh release view --repo AutoHotkey/Ahk2Exe --json assets --jq '[.assets[].name] | join(", ")'
-            throw "Couldn't download Ahk2Exe from GitHub (assets: $names)"
-          }
           Expand-Archive tools\ahk2exe.zip tools\ahk2exe
           $ahk = Get-ChildItem tools\ahk -Recurse -Filter AutoHotkey64.exe | Select-Object -First 1
           $a2e = Get-ChildItem tools\ahk2exe -Recurse -Filter Ahk2Exe.exe | Select-Object -First 1
           if (-not $ahk) { throw "AutoHotkey64.exe missing from the download: $((Get-ChildItem tools\ahk -Recurse).Name -join ', ')" }
           if (-not $a2e) { throw "Ahk2Exe.exe missing from the download: $((Get-ChildItem tools\ahk2exe -Recurse).Name -join ', ')" }
+          if ($ahk.VersionInfo.FileVersion -ne $env:AHK_VERSION) { throw "AutoHotkey64.exe is $($ahk.VersionInfo.FileVersion), expected $env:AHK_VERSION" }
+          if ($a2e.VersionInfo.FileVersion -ne $env:AHK2EXE_VERSION) { throw "Ahk2Exe.exe is $($a2e.VersionInfo.FileVersion), expected $env:AHK2EXE_VERSION" }
           "AHK=$($ahk.FullName)" >> $env:GITHUB_ENV
           "AHK2EXE=$($a2e.FullName)" >> $env:GITHUB_ENV
           Write-Host "AutoHotkey $($ahk.VersionInfo.FileVersion), Ahk2Exe $($a2e.VersionInfo.FileVersion)"
