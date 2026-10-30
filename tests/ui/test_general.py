@@ -110,6 +110,12 @@ def accent(pg, var="--accent"):
     return pg.evaluate("v => getComputedStyle(document.documentElement).getPropertyValue(v).trim().toUpperCase()", var)
 
 
+# The picker is the house colour-editor.js: .swatch buttons (data-hex), .swatch-other (Other…), and the
+# .colour-editor with its .ce-sv square, .ce-hue slider, hex box, .ce-note and Cancel / Apply colour.
+OTHER, EDITOR, HEX = "#accent-picker .swatch-other", "#accent-picker .colour-editor", "#accent-picker .ce-preview .field"
+APPLY, CANCEL = EDITOR + " .btn.primary", EDITOR + " .btn:not(.primary)"
+
+
 def test_accent_colour_teal_by_default_then_custom(open_ui):
     pg = open_ui("?page=general")
     teal = accent(pg)
@@ -119,14 +125,15 @@ def test_accent_colour_teal_by_default_then_custom(open_ui):
     assert setting(pg, "accentMode") == "custom"
     assert pg.locator("#accrow").is_visible()
     assert accent(pg) == "#7A5AE0" != teal                         # the default custom colour: purple
-    pg.click("[data-swatch='3D8A4F']")
+    pg.click(".swatch[data-hex='3D8A4F']")
     assert setting(pg, "accentCustom") == "3D8A4F"
-    assert pg.get_attribute("[data-swatch='3D8A4F']", "aria-pressed") == "true"
+    assert pg.get_attribute(".swatch[data-hex='3D8A4F']", "aria-pressed") == "true"
     green = accent(pg)                                            # deepened a touch for white text
-    assert green == "#" + pg.evaluate("shadeFor('3D8A4F', '000000', 4.5, 'FFFFFF')")
-    assert pg.evaluate("h => contrastHex(h, 'FFFFFF')", green.lstrip("#")) >= 4.5
+    assert green == "#" + pg.evaluate("accentShade('3D8A4F', '000000', 4.5, 'FFFFFF')")
+    assert pg.evaluate("h => accentContrast(h, 'FFFFFF')", green.lstrip("#")) >= 4.5
     pg.click("#toast [data-act=undoSetting]")                    # back to purple
     assert accent(pg) == "#7A5AE0"
+    assert pg.get_attribute(".swatch[data-hex='7A5AE0']", "aria-pressed") == "true"
     pg.click("[data-accmode=teal]")
     assert accent(pg) == teal
 
@@ -134,56 +141,71 @@ def test_accent_colour_teal_by_default_then_custom(open_ui):
 def test_other_colour_previews_live_and_applies_only_on_apply(open_ui):
     pg = open_ui("?page=general")
     pg.click("[data-accmode=custom]")
-    assert not pg.locator("#accedit").is_visible()
-    pg.click("[data-act=accentOther]")
-    assert pg.locator("#accedit").is_visible()
-    assert pg.input_value("#acc-hex") == "#7A5AE0"                 # opens on the current colour
-    assert pg.locator("#accedit [data-act=accentApply]").is_visible()
-    pg.fill("#acc-hex", "#ffe680")                                  # typing a colour previews it...
+    pg.evaluate("window.sentMsgs = []; const real = demoHandle; demoHandle = (m) => { sentMsgs.push(m); real(m); }; 0")
+    assert not pg.locator(EDITOR).is_visible()
+    pg.click(OTHER)
+    assert pg.locator(EDITOR).is_visible()
+    assert pg.input_value(HEX) == "#7A5AE0"                         # opens on the current colour
+    assert pg.locator(APPLY).is_visible()
+    pg.fill(HEX, "#ffe680")                                         # typing a colour previews it...
     fill = accent(pg).lstrip("#")
     assert fill != "7A5AE0" and fill != "FFE680"                    # ...deepened so white text reads
-    assert pg.evaluate("h => contrastHex(h, 'FFFFFF')", fill) >= 4.5
-    assert pg.evaluate("h => contrastHex(h, '19202A')", accent(pg, "--guide-accent").lstrip("#")) >= 4.5
-    assert "a little deeper" in pg.inner_text("#acc-note")
+    assert pg.evaluate("h => accentContrast(h, 'FFFFFF')", fill) >= 4.5
+    assert pg.evaluate("h => accentContrast(h, '19202A')", accent(pg, "--guide-accent").lstrip("#")) >= 4.5
+    assert "a little deeper" in pg.inner_text(EDITOR + " .ce-note")
+    assert pg.evaluate("sentMsgs.some(m => m.type === 'accentPreview' && m.hex === 'FFE680')"), "the title bar previews too"
     assert setting(pg, "accentCustom") == "7A5AE0"                  # ...but nothing is saved yet
-    pg.click("#accedit [data-act=accentApply]")
+    pg.click(APPLY)
     assert setting(pg, "accentCustom") == "FFE680"
-    assert not pg.locator("#accedit").is_visible()
+    assert not pg.locator(EDITOR).is_visible()
     assert "applied" in pg.inner_text("#toast")
-    assert "#FFE680" in pg.inner_text("#swrow")                     # shown on the Other button
+    assert "#FFE680" in pg.inner_text(OTHER)                        # shown on the Other button
 
 
 def test_other_colour_cancel_esc_and_leaving_put_it_back(open_ui):
     pg = open_ui("?page=general")
     pg.click("[data-accmode=custom]")
     purple = accent(pg)
-    pg.click("[data-act=accentOther]")
-    pg.fill("#acc-hue", "120")                                      # dragging the hue previews green
+    pg.click(OTHER)
+    pg.fill(EDITOR + " .ce-hue", "120")                             # dragging the hue previews green
     assert accent(pg) != purple
-    pg.click("#accedit [data-act=accentCancel]")
-    assert accent(pg) == purple and not pg.locator("#accedit").is_visible()
-    pg.click("[data-act=accentOther]")
-    pg.fill("#acc-hex", "#3b6fd8")
-    pg.focus("#acc-sv")
+    pg.click(CANCEL)
+    assert accent(pg) == purple and not pg.locator(EDITOR).is_visible()
+    pg.click(OTHER)
+    pg.fill(HEX, "#3b6fd8")
+    pg.focus(EDITOR + " .ce-sv")
     pg.keyboard.press("Escape")
     assert accent(pg) == purple and setting(pg, "accentCustom") == "7A5AE0"
-    pg.click("[data-act=accentOther]")
-    pg.fill("#acc-hex", "#3b6fd8")
+    pg.click(OTHER)
+    pg.fill(HEX, "#3b6fd8")
     pg.click("[data-go=zones]")                                      # leaving General drops the preview
     assert accent(pg) == purple
     pg.click("[data-go=general]")
-    pg.click("[data-act=accentOther]")
+    assert not pg.locator(EDITOR).is_visible()
+    pg.click(OTHER)
     # a mouse click needs the square on screen, and clear of the toast at the bottom
-    pg.evaluate("document.querySelector('#acc-sv').scrollIntoView({ block: 'center' })")
-    box = pg.locator("#acc-sv").bounding_box()
+    pg.evaluate("document.querySelector('#accent-picker .ce-sv').scrollIntoView({ block: 'center' })")
+    box = pg.locator(EDITOR + " .ce-sv").bounding_box()
     x, y = box["x"] + box["width"] - 6, box["y"] + 6       # near the top right (inside its rounded corner): full colour
-    under = pg.evaluate("([x, y]) => { const e = document.elementFromPoint(x, y); return e ? e.tagName + '#' + e.id + '.' + e.className : 'nothing'; }", [x, y])
+    under = pg.evaluate("([x, y]) => { const e = document.elementFromPoint(x, y); return e ? e.tagName + '.' + e.className : 'nothing'; }", [x, y])
     pg.mouse.click(x, y)
-    assert pg.input_value("#acc-hex") != "#7A5AE0", f"the click at {x:.0f},{y:.0f} hit {under}; editor open: {pg.evaluate('!!accHSV')}"
-    pg.focus("#acc-hex")
+    assert pg.input_value(HEX) != "#7A5AE0", f"the click at {x:.0f},{y:.0f} hit {under}; editor open: {pg.evaluate('picker.isOpen()')}"
+    pg.focus(HEX)
     pg.keyboard.press("Enter")                                      # Enter applies
     assert setting(pg, "accentCustom") != "7A5AE0"
-    assert not pg.locator("#accedit").is_visible()
+    assert not pg.locator(EDITOR).is_visible()
+
+
+def test_switching_away_from_custom_closes_the_editor(open_ui):
+    pg = open_ui("?page=general")
+    pg.click("[data-accmode=custom]")
+    pg.click(OTHER)
+    pg.fill(HEX, "#3b6fd8")
+    pg.click("[data-accmode=teal]")
+    assert setting(pg, "accentMode") == "teal"
+    teal = pg.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--accent').trim().toUpperCase()")
+    assert teal not in ("#7A5AE0", "#3B6FD8")                       # the preview and the custom colour are both gone
+    assert not pg.evaluate("picker.isOpen()")
 
 
 def test_accent_colour_follows_windows(open_ui):
@@ -223,8 +245,8 @@ def test_updated_note_until_dismissed(open_ui):
 
 PICKS = ["437784", "3B6FD8", "7A5AE0", "C2477F", "C8463D", "C9692A", "A9821C", "3D8A4F", "5B6B80",   # the swatches
          "FFE680", "FFFFFF", "000000", "00FF00", "00FFFF"]                                        # awkward picks
-PAIRS = [("--accent-ink", "--accent"), ("--accent-ink", "--accent-hover"), ("--guide-accent", "--panel"), ("--guide-accent", "--bg"),
-         ("--guide-accent", "--side"), ("--tip-text", "--tip"), ("--key-text", "--key"), ("--text", "--row-sel"), ("--text", "--zone-sel")]
+PAIRS = [("--accent-fg", "--accent"), ("--accent-fg", "--accent-hover"), ("--guide-accent", "--card"), ("--guide-accent", "--bg"),
+         ("--guide-accent", "--panel"), ("--tip-text", "--tip"), ("--key-badge-text", "--key-badge"), ("--text", "--row-selected"), ("--text", "--zone-selected")]
 
 
 def test_every_accent_colour_stays_readable_in_both_themes(open_ui):
@@ -237,5 +259,5 @@ def test_every_accent_colour_stays_readable_in_both_themes(open_ui):
             for fg, bg in PAIRS:
                 ratio = pg.evaluate("""([f, b]) => { const cs = getComputedStyle(document.documentElement);
                     const v = (n) => cs.getPropertyValue(n).trim().replace('#', '');
-                    return contrastHex(v(f), v(b)); }""", [fg, bg])
+                    return accentContrast(v(f), v(b)); }""", [fg, bg])
                 assert ratio >= 4.5, f"{theme} #{hexc}: {fg} on {bg} = {ratio:.2f}"

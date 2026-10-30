@@ -29,120 +29,120 @@
   ?update=1, ?welcome=1, ?taskbar=left), so the look can be checked without ZoneSnap.
 --><style>
 :root {
-  --font: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
-  --mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
+  --font-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", Consolas, ui-monospace, monospace;
 }
-/* House style 2 tokens (claude/house-style in the Software Development project). ZoneSnap's names,
-   with the house token each one is. --accent (fills) and --guide-accent (focus rings, indicators,
-   drop targets) are the two teals; Accent colour (Windows or custom) swaps them, and the
-   tints made from them, in applyTheme(). */
+/* House style 2 tokens (claude/house-style in the Software Development project), with the house
+   names and values. --accent (fills) and --guide-accent (focus rings, indicators, drop targets) are
+   the two teals; Accent colour (Windows or custom) swaps them, and the tints made from them, with
+   the house accent.js (in the script below). */
 :root[data-theme="dark"] {
-  --bg: #141A21; --side: #10151B; --panel: #19202A; --card-hover: #1F2732;          /* Bg, Panel, Card, CardHover */
-  --field: #0F141A; --line: #232B35; --border: #29323D; --input-border: #606D7E;     /* Input, Line, CardBorder, InputBorder */
+  --bg: #141A21; --panel: #10151B; --card: #19202A; --card-hover: #1F2732;
+  --input: #0F141A; --line: #232B35; --card-border: #29323D; --input-border: #606D7E;
   --button: #1F2731; --button-hover: #27303B; --button-border: #323D49;
-  --text: #E6EAEF; --text2: #C9D1D9; --sub: #95A0AE; --faint: #95A0AE;              /* Text, TextSecondary, Muted */
-  --nav-on: #1F2833; --nav-hover: #1A212A; --row-sel: #1B3036;
-  --accent: #437784; --accent-hover: #3A6A76; --accent-ink: #FFFFFF; --guide-accent: #3CC5B0;
-  --zone: #253041; --zone-line: #334155; --zone-sel: #1C4440; --game: #22303F;
+  --text: #E6EAEF; --text-secondary: #C9D1D9; --muted: #95A0AE;
+  --nav-selected: #1F2833; --nav-hover: #1A212A; --row-selected: #1B3036;
+  --accent: #437784; --accent-hover: #3A6A76; --accent-fg: #FFFFFF; --guide-accent: #3CC5B0;
+  --zone: #253041; --zone-line: #334155; --zone-selected: #1C4440; --zone-game: #22303F;
   --bezel: #0A0D12; --screen: #0F131A; --grip: #8794A8;
-  --warn: #F0B45A; --danger: #F2777A; --danger-line: #4A2A33; --success: #3DD68C; --success-bg: #142A20;
-  --tip: #14272A; --tip-border: #22423F; --tip-text: #C9E9E3; --key: #14272A; --key-border: #22423F; --key-text: #8FD9CC;
-  --thumb: #2E3742; --knob-off: #9AA5B0; --scroll: #3A4558; color-scheme: dark;
+  --warning: #F0B45A; --danger: #F2777A; --danger-border: #4A2A33; --success: #3DD68C; --success-bg: #142A20;
+  --tip: #14272A; --tip-border: #22423F; --tip-text: #C9E9E3; --key-badge: #14272A; --key-badge-border: #22423F; --key-badge-text: #8FD9CC;
+  --track-off: #2E3742; --knob-off: #9AA5B0; --scroll-thumb: #3A4558; color-scheme: dark;
 }
 :root[data-theme="light"] {
-  --bg: #F3F5F8; --side: #EAEEF2; --panel: #FFFFFF; --card-hover: #F5F8FA;
-  --field: #FAFBFC; --line: #E2E6EC; --border: #D6DCE3; --input-border: #8A96A3;
+  --bg: #F3F5F8; --panel: #EAEEF2; --card: #FFFFFF; --card-hover: #F5F8FA;
+  --input: #FAFBFC; --line: #E2E6EC; --card-border: #D6DCE3; --input-border: #8A96A3;
   --button: #EEF1F5; --button-hover: #E2E7ED; --button-border: #C2CBD4;
-  --text: #141C27; --text2: #34414E; --sub: #566273; --faint: #566273;
-  --nav-on: #DCE4EC; --nav-hover: #E2E8EE; --row-sel: #D5E8EC;
-  --accent: #3A6D7A; --accent-hover: #2F5D69; --accent-ink: #FFFFFF; --guide-accent: #136A5D;
-  --zone: #E5EAF1; --zone-line: #C3CCD8; --zone-sel: #D3F1EC; --game: #DCE7F2;
+  --text: #141C27; --text-secondary: #34414E; --muted: #566273;
+  --nav-selected: #DCE4EC; --nav-hover: #E2E8EE; --row-selected: #D5E8EC;
+  --accent: #3A6D7A; --accent-hover: #2F5D69; --accent-fg: #FFFFFF; --guide-accent: #136A5D;
+  --zone: #E5EAF1; --zone-line: #C3CCD8; --zone-selected: #D3F1EC; --zone-game: #DCE7F2;
   --bezel: #C9D1DB; --screen: #F2F5F8; --grip: #6B7787;
-  --warn: #8A5300; --danger: #B8323A; --danger-line: #E9C3C6; --success: #18693F; --success-bg: #DFF3E8;
-  --tip: #E3F4F1; --tip-border: #B9E2DA; --tip-text: #134E46; --key: #E3F4F1; --key-border: #B9E2DA; --key-text: #155F55;
-  --thumb: #8A96A3; --knob-off: #FFFFFF; --scroll: #B7C1CA; color-scheme: light;
+  --warning: #8A5300; --danger: #B8323A; --danger-border: #E9C3C6; --success: #18693F; --success-bg: #DFF3E8;
+  --tip: #E3F4F1; --tip-border: #B9E2DA; --tip-text: #134E46; --key-badge: #E3F4F1; --key-badge-border: #B9E2DA; --key-badge-text: #155F55;
+  --track-off: #8A96A3; --knob-off: #FFFFFF; --scroll-thumb: #B7C1CA; color-scheme: light;
 }
-* { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--scroll) transparent; }
+* { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--scroll-thumb) transparent; }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-thumb { background: var(--scroll); border: 2px solid transparent; border-radius: 6px; background-clip: padding-box; }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border: 2px solid transparent; border-radius: 6px; background-clip: padding-box; }
 html, body { margin: 0; height: 100%; }
-body { background: var(--bg); color: var(--text); font: 14px/1.4 var(--font); overflow: hidden; }
+body { background: var(--bg); color: var(--text); font: 14px/1.4 var(--font-ui); overflow: hidden; }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--guide-accent); outline-offset: 2px; }
 
 .app { display: flex; height: 100%; }
-nav { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; padding: 16px 12px; background: var(--side); border-right: 1px solid var(--line); }
+nav { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; padding: 16px 12px; background: var(--panel); border-right: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 16px; font-size: 16px; font-weight: 700; }
-.nav-btn { min-height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--sub); font-weight: 500; text-align: left; }
+.nav-btn { min-height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-weight: 500; text-align: left; }
 .nav-btn::before { content: ""; width: 3px; height: 18px; border-radius: 2px; background: transparent; }
-.nav-btn[aria-current="page"] { background: var(--nav-on); color: var(--text); font-weight: 600; }
+.nav-btn[aria-current="page"] { background: var(--nav-selected); color: var(--text); font-weight: 600; }
 .nav-btn[aria-current="page"]::before { background: var(--guide-accent); }
 .nav-btn:hover { color: var(--text); background: var(--nav-hover); }
 .prof-wrap { position: relative; margin: -6px 0 12px; }
-.prof-chip { width: 100%; min-height: 44px; display: flex; align-items: center; gap: 10px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--text); font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
-.prof-chip:hover { border-color: var(--border); }
-.prof-chip .av { width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--accent); color: var(--accent-ink); font-size: 13px; font-weight: 700; }
+.prof-chip { width: 100%; min-height: 44px; display: flex; align-items: center; gap: 10px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--text); font: inherit; font-weight: 600; text-align: left; cursor: pointer; }
+.prof-chip:hover { border-color: var(--card-border); }
+.prof-chip .av { width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--accent); color: var(--accent-fg); font-size: 13px; font-weight: 700; }
 .prof-chip .pn { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.prof-chip .chev { width: 14px; height: 14px; color: var(--sub); transition: transform .15s; }
+.prof-chip .chev { width: 14px; height: 14px; color: var(--muted); transition: transform .15s; }
 .prof-chip[aria-expanded="true"] .chev { transform: rotate(180deg); }
-.prof-menu { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 6px); padding: 6px; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+.prof-menu { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 6px); padding: 6px; border: 1px solid var(--card-border); border-radius: 10px; background: var(--card); box-shadow: 0 8px 24px rgba(0,0,0,.25); }
 .prof-menu button { width: 100%; display: block; padding: 9px 10px; border: 0; border-radius: 6px; background: none; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
-.prof-menu button:hover, .prof-menu button:focus-visible { background: var(--field); }
-.prof-menu .lbl { padding: 6px 10px 4px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--sub); }
+.prof-menu button:hover, .prof-menu button:focus-visible { background: var(--input); }
+.prof-menu .lbl { padding: 6px 10px 4px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
 .prof-menu hr { margin: 6px 0; border: 0; border-top: 1px solid var(--line); }
-.nav-foot { margin-top: auto; padding: 10px; font-size: 12px; color: var(--faint); }
+.nav-foot { margin-top: auto; padding: 10px; font-size: 12px; color: var(--muted); }
 
 main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 .page { flex: 1; display: none; flex-direction: column; min-height: 0; }
 .page.on { display: flex; }
 .scroll { flex: 1; overflow: auto; padding: 28px 32px; }
 h1 { margin: 0; font-size: 22px; font-weight: 600; }
-.lede { margin: 6px 0 0; font-size: 14px; color: var(--sub); }
-.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 32px; border-top: 1px solid var(--line); background: var(--side); }
-.foot .msg { font-size: 13px; color: var(--sub); }
-.foot .msg.dirty { color: var(--warn); }
+.lede { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 32px; border-top: 1px solid var(--line); background: var(--panel); }
+.foot .msg { font-size: 13px; color: var(--muted); }
+.foot .msg.dirty { color: var(--warning); }
 .foot .msg.ok { color: var(--guide-accent); }
 .row-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .btn { min-height: 38px; padding: 0 16px; background: var(--button); border: 1px solid var(--button-border); border-radius: 8px; font-size: 13px; font-weight: 600; }
 .btn:hover { background: var(--button-hover); }
-.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
 .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
-.btn.danger { background: transparent; color: var(--danger); border-color: var(--danger-line); }
+.btn.danger { background: transparent; color: var(--danger); border-color: var(--danger-border); }
 .btn:disabled { opacity: .45; cursor: default; }
-.field { min-height: 38px; padding: 0 10px; background: var(--field); border: 1px solid var(--input-border); border-radius: 8px; font-size: 13px; }
+.field { min-height: 38px; padding: 0 10px; background: var(--input); border: 1px solid var(--input-border); border-radius: 8px; font-size: 13px; }
 .field:focus { outline: none; border-color: var(--guide-accent); }
-.num { font-family: var(--mono); }
-.seg { display: inline-flex; padding: 4px; background: var(--field); border: 1px solid var(--border); border-radius: 10px; }
-.seg button { height: 32px; padding: 0 14px; white-space: nowrap; border: 0; border-radius: 7px; background: transparent; color: var(--text2); font-size: 13px; font-weight: 600; }
-.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.num { font-family: var(--font-mono); }
+.seg { display: inline-flex; padding: 4px; background: var(--input); border: 1px solid var(--card-border); border-radius: 10px; }
+.seg button { height: 32px; padding: 0 14px; white-space: nowrap; border: 0; border-radius: 7px; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); }
 
 /* ---------- zone editor ---------- */
 .ed-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 14px 24px; border-bottom: 1px solid var(--line); }
 .ed-top .left, .ed-top .right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.pill { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--sub); }
+.pill { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
 .dot { width: 8px; height: 8px; border-radius: 4px; background: var(--guide-accent); }
 .ed-body { flex: 1; display: flex; min-height: 0; }
 .ed-main { flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 18px 24px; min-width: 0; overflow: auto; }
 .ed-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .ed-head .t { font-size: 15px; font-weight: 600; white-space: nowrap; }
-.ed-head .t small { margin-left: 8px; font-size: 12px; font-weight: 400; color: var(--sub); }
-.ed-head .m { font-size: 12px; color: var(--sub); }
+.ed-head .t small { margin-left: 8px; font-size: 12px; font-weight: 400; color: var(--muted); }
+.ed-head .m { font-size: 12px; color: var(--muted); }
 .arrange { position: relative; align-self: center; }
-.arr-mon { position: absolute; padding: 0; background: var(--bezel); border: 2px solid var(--border); border-radius: 6px; overflow: hidden; color: var(--text); }
+.arr-mon { position: absolute; padding: 0; background: var(--bezel); border: 2px solid var(--card-border); border-radius: 6px; overflow: hidden; color: var(--text); }
 .arr-mon[aria-pressed="true"] { border-color: var(--guide-accent); }
 .arr-mon .z { position: absolute; background: var(--zone); border: 1px solid var(--zone-line); border-radius: 2px; }
 .arr-mon .lbl { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,.45); }
-.arr-mon .lbl small { font-family: var(--mono); font-size: 9px; font-weight: 500; }
-.monitor { align-self: center; padding: 10px; background: var(--bezel); border: 1px solid var(--border); border-radius: 10px; }
+.arr-mon .lbl small { font-family: var(--font-mono); font-size: 9px; font-weight: 500; }
+.monitor { align-self: center; padding: 10px; background: var(--bezel); border: 1px solid var(--card-border); border-radius: 10px; }
 .screen { position: relative; background: var(--screen); border-radius: 4px; touch-action: none; user-select: none; }
 .zone { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0; background: var(--zone); border: 2px solid var(--zone-line); border-radius: 6px; overflow: hidden; }
-.zone.game { background: var(--game); }
-.zone.sel { background: var(--zone-sel); border-color: var(--guide-accent); }
+.zone.game { background: var(--zone-game); }
+.zone.sel { background: var(--zone-selected); border-color: var(--guide-accent); }
 .zone .n { font-size: 20px; font-weight: 700; }
-.zone .s { font-family: var(--mono); font-size: 10px; color: var(--sub); }
-.tag { padding: 1px 6px; border-radius: 4px; background: var(--accent); color: var(--accent-ink); font-size: 9px; font-weight: 700; letter-spacing: .06em; }
+.zone .s { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
+.tag { padding: 1px 6px; border-radius: 4px; background: var(--accent); color: var(--accent-fg); font-size: 9px; font-weight: 700; letter-spacing: .06em; }
 .edge { position: absolute; display: flex; align-items: center; justify-content: center; z-index: 2; }
 .edge.v { width: 14px; cursor: col-resize; }
 .edge.h { height: 14px; cursor: row-resize; }
@@ -150,190 +150,199 @@ h1 { margin: 0; font-size: 22px; font-weight: 600; }
 .edge.v i { width: 4px; height: 36px; max-height: 70%; }
 .edge.h i { width: 30px; max-width: 70%; height: 4px; }
 .edge.drag i, .edge:hover i { background: var(--guide-accent); }
-.hint { font-size: 12px; color: var(--sub); text-align: center; }
-.label { font-size: 12px; font-weight: 600; color: var(--sub); letter-spacing: .06em; text-transform: uppercase; }
+.hint { font-size: 12px; color: var(--muted); text-align: center; }
+.label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
 .presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
-.preset { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; text-align: left; }
+.preset { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--card); border: 1px solid var(--card-border); border-radius: 10px; text-align: left; }
 .preset.on { border-color: var(--guide-accent); }
 .preset .bar { display: flex; gap: 3px; height: 28px; }
-.preset .bar span { border-radius: 3px; background: var(--thumb); }
+.preset .bar span { border-radius: 3px; background: var(--track-off); }
 .preset .bar span.mid { background: var(--accent); }
 .preset .t { font-size: 13px; font-weight: 600; }
-.preset .s { font-size: 11px; color: var(--sub); }
+.preset .s { font-size: 11px; color: var(--muted); }
 
-.insp { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; background: var(--side); border-left: 1px solid var(--line); overflow: auto; }
+.insp { width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; padding: 18px 20px; background: var(--panel); border-left: 1px solid var(--line); overflow: auto; }
 .insp .hd { display: flex; align-items: center; justify-content: space-between; }
 .insp .hd .t { font-size: 15px; font-weight: 600; }
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.grid2 label { display: flex; flex-direction: column; gap: 5px; font-size: 11px; color: var(--sub); }
+.grid2 label { display: flex; flex-direction: column; gap: 5px; font-size: 11px; color: var(--muted); }
 .grid2 input { width: 100%; }
 .sep { height: 1px; background: var(--line); }
 .stack { display: flex; flex-direction: column; gap: 8px; }
 .stack .btn { text-align: left; }
-.note { padding: 12px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; font-size: 12px; color: var(--sub); }
+.note { padding: 12px; background: var(--card); border: 1px solid var(--card-border); border-radius: 10px; font-size: 12px; color: var(--muted); }
 .badge { padding: 2px 8px; border-radius: 6px; background: var(--success-bg); color: var(--success); font-size: 12px; font-weight: 600; }
 
 /* ---------- settings ---------- */
-.card { margin-top: 18px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
+.card { margin-top: 18px; background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; }
 .item { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 15px 18px; border-top: 1px solid var(--line); }
 .item:first-child { border-top: 0; }
 /* narrow page (guide panel open): the control drops under its text instead of squeezing it */
 .item { flex-wrap: wrap; row-gap: 10px; }
 .item > div:first-child { flex: 1 1 240px; min-width: 0; }
 .item .t { font-size: 15px; font-weight: 600; }
-.item .h { margin-top: 3px; font-size: 13px; color: var(--sub); }
-.switch { width: 46px; height: 26px; flex-shrink: 0; padding: 3px; border: 0; border-radius: 13px; background: var(--thumb); display: flex; justify-content: flex-start; }
+.item .h { margin-top: 3px; font-size: 13px; color: var(--muted); }
+.switch { width: 46px; height: 26px; flex-shrink: 0; padding: 3px; border: 0; border-radius: 13px; background: var(--track-off); display: flex; justify-content: flex-start; }
 .switch::after { content: ""; width: 20px; height: 20px; border-radius: 10px; background: var(--knob-off); }
-.switch[aria-checked="true"]::after { background: var(--accent-ink); }
+.switch[aria-checked="true"]::after { background: var(--accent-fg); }
 .item[hidden] { display: none; }
-.swrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%; }
-.swrow .lab { color: var(--sub); font-size: 13px; margin-right: 4px; }
-.sw { width: 30px; height: 30px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; cursor: pointer; outline: 2px solid transparent; outline-offset: 2px; }
-.sw[aria-pressed="true"] { outline-color: var(--guide-accent); }
-.swpick { display: flex; align-items: center; gap: 8px; margin-left: 6px; padding: 5px 10px 5px 6px; border: 1px solid var(--button-border); border-radius: 8px; background: var(--button); color: var(--text); font: inherit; font-size: 13px; cursor: pointer; }
-.swpick:hover { background: var(--button-hover); }
-.swpick[aria-pressed="true"] { border-color: var(--guide-accent); }
-.swpick i { width: 22px; height: 22px; border-radius: 6px; background: conic-gradient(#E5484D, #F5D90A, #46A758, #12A594, #3E63DD, #8E4EC6, #E5484D); }
-.swpick i.cur { background: var(--accent); }
 #accrow { flex-wrap: wrap; }
-.accedit { display: flex; gap: 22px; flex-wrap: wrap; width: 100%; margin-top: 4px; padding: 16px; border: 1px solid var(--guide-accent); border-radius: 12px; background: var(--field); }
-.accedit[hidden] { display: none; }
-.acc-sv { position: relative; width: 240px; height: 150px; border-radius: 8px; cursor: crosshair; touch-action: none;
-  background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent), var(--acc-hue, red); }
-.acc-sv:focus-visible { outline: 2px solid var(--guide-accent); outline-offset: 3px; }
-.acc-sv b { position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,.5); pointer-events: none; }
-.acc-hue { display: block; width: 240px; margin-top: 12px; height: 14px; border-radius: 7px; -webkit-appearance: none; appearance: none;
+#accent-picker { width: 100%; }
+/* ---------- accent colour: swatches and the colour editor (house-style.md, "Accent colour") ----------
+   Don't write this markup by hand: colour-editor.js builds it (swatches, Other… and the editor)
+   inside an element you give it, and handles the pointer, keyboard, live preview and Apply/Cancel:
+     <div class="seg" role="group" aria-label="Accent colour"> [App] teal | Windows | Custom </div>
+     <div id="accent-picker"></div>   ->   createAccentPicker(element, { value, onApply, onPreview })
+   These are the styles it uses. */
+.swatches { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.swatches .lab { margin-right: 4px; font-size: 13px; color: var(--muted); }
+.swatch { width: 30px; height: 30px; flex-shrink: 0; padding: 0; border: 0; border-radius: 50%; outline: 2px solid transparent; outline-offset: 2px; }
+.swatch[aria-pressed="true"] { outline-color: var(--guide-accent); }
+.swatch:focus-visible { outline-color: var(--muted); }
+.swatch[aria-pressed="true"]:focus-visible { outline-color: var(--guide-accent); }
+.swatch-other { display: flex; align-items: center; gap: 8px; margin-left: 6px; padding: 5px 10px 5px 6px; background: var(--button); border: 1px solid var(--button-border); border-radius: 8px; font-size: 13px; }
+.swatch-other:hover { background: var(--button-hover); }
+.swatch-other[aria-pressed="true"], .swatch-other[aria-expanded="true"] { border-color: var(--guide-accent); }
+.swatch-other i { width: 22px; height: 22px; border-radius: 6px; background: conic-gradient(#E5484D, #F5D90A, #46A758, #12A594, #3E63DD, #8E4EC6, #E5484D); }
+.swatch-other i.current { background: var(--accent); }
+.colour-editor { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 14px; padding: 16px; background: var(--input); border: 1px solid var(--guide-accent); border-radius: 12px; }
+.colour-editor[hidden] { display: none; }
+.ce-sv { position: relative; width: 240px; height: 150px; border-radius: 8px; cursor: crosshair; touch-action: none;
+  background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent), var(--ce-hue, red); }
+.ce-sv b { position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0, 0, 0, .5); pointer-events: none; }
+.ce-hue { display: block; width: 240px; height: 14px; margin-top: 12px; border-radius: 7px; -webkit-appearance: none; appearance: none;
   background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
-.acc-hue::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.5); cursor: pointer; }
-.acc-side { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 10px; }
-.acc-prev { display: flex; align-items: center; gap: 10px; }
-.acc-prev i { width: 38px; height: 38px; flex-shrink: 0; border-radius: 9px; background: var(--accent); }
-.acc-prev .field { width: 110px; font-family: var(--mono); text-transform: uppercase; }
-.acc-note { color: var(--sub); font-size: 12px; line-height: 1.45; }
-.acc-note strong { color: var(--text); }
+.ce-hue::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .5); cursor: pointer; }
+.ce-hue::-moz-range-thumb { width: 18px; height: 18px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, .5); cursor: pointer; }
+.ce-side { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 10px; }
+.ce-preview { display: flex; align-items: center; gap: 10px; }
+.ce-preview i { width: 38px; height: 38px; flex-shrink: 0; border-radius: 9px; background: var(--accent); }
+.ce-preview .field { width: 110px; font-family: var(--font-mono); text-transform: uppercase; }
+.ce-note { font-size: 12px; line-height: 1.45; color: var(--muted); }
+.ce-note strong { color: var(--text); }
 .switch[aria-checked="true"] { background: var(--accent); justify-content: flex-end; }
 .switch:disabled { opacity: .35; cursor: default; }
-.welcome { margin-top: 18px; padding: 16px 18px; border: 1px solid var(--guide-accent); border-radius: 12px; background: var(--panel); }
+.welcome { margin-top: 18px; padding: 16px 18px; border: 1px solid var(--guide-accent); border-radius: 12px; background: var(--card); }
 .welcome .t { font-size: 16px; font-weight: 700; }
 .welcome p { margin: 6px 0 0; font-size: 13px; }
 .dimrow { display: flex; align-items: center; gap: 24px; }
 .dimrow input[type=range] { flex: 1; accent-color: var(--accent); }
-.dimprev { display: flex; gap: 4px; width: 200px; height: 60px; padding: 6px; background: var(--bezel); border: 1px solid var(--border); border-radius: 8px; }
+.dimprev { display: flex; gap: 4px; width: 200px; height: 60px; padding: 6px; background: var(--bezel); border: 1px solid var(--card-border); border-radius: 8px; }
 .dimprev span { position: relative; border-radius: 3px; background: var(--zone-line); }
 .dimprev span.mid { background: var(--accent); }
 .dimprev span i { position: absolute; inset: 0; border-radius: 3px; background: #000; }
 .stepper { display: inline-flex; align-items: center; gap: 6px; }
-.stepper button { width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 8px; background: var(--field); }
-.stepper output { width: 40px; text-align: center; font-family: var(--mono); }
+.stepper button { width: 32px; height: 32px; border: 1px solid var(--card-border); border-radius: 8px; background: var(--input); }
+.stepper output { width: 40px; text-align: center; font-family: var(--font-mono); }
 .item.sub-head { padding-top: 18px; padding-bottom: 4px; }
-.item.sub-head .t { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--sub); }
+.item.sub-head .t { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
 .item.ws-actions { flex-wrap: wrap; }
 .item.ws-actions > .h { flex: 1 1 240px; }
 .app-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-top: 1px solid var(--line); }
 .app-row:first-child { border-top: 0; }
-.tile { width: 38px; height: 38px; flex-shrink: 0; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700; background: var(--accent); color: var(--accent-ink); }
+.tile { width: 38px; height: 38px; flex-shrink: 0; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-weight: 700; background: var(--accent); color: var(--accent-fg); }
 .app-row .info { flex: 1; min-width: 0; }
 .app-row .nm { display: flex; align-items: center; gap: 8px; font-weight: 500; }
-.kindbtn { padding: 1px 7px; border-radius: 5px; border: 1px dashed var(--border); background: none; color: var(--sub); font: inherit; font-size: 11px; font-weight: 400; cursor: pointer; white-space: nowrap; }
+.kindbtn { padding: 1px 7px; border-radius: 5px; border: 1px dashed var(--card-border); background: none; color: var(--muted); font: inherit; font-size: 11px; font-weight: 400; cursor: pointer; white-space: nowrap; }
 .kindbtn:hover { color: var(--text); border-color: var(--guide-accent); }
-.warnline { margin-top: 4px; font-size: 12px; color: var(--warn); }
+.warnline { margin-top: 4px; font-size: 12px; color: var(--warning); }
 .linkbtn { padding: 0; border: 0; background: none; color: var(--text); font: inherit; text-decoration: underline; cursor: pointer; }
 .linkbtn:hover { color: var(--guide-accent); }
-.chip { padding: 1px 7px; border-radius: 6px; background: var(--field); border: 1px solid var(--border); font-size: 11px; color: var(--text2); font-weight: 400; }
-.app-row .cmd { margin-top: 4px; font-family: var(--mono); font-size: 11px; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip { padding: 1px 7px; border-radius: 6px; background: var(--input); border: 1px solid var(--card-border); font-size: 11px; color: var(--text-secondary); font-weight: 400; }
+.app-row .cmd { margin-top: 4px; font-family: var(--font-mono); font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .app-row .cmd-edit { display: flex; gap: 6px; margin-top: 6px; }
 .app-row .info > .cmd-edit:first-child { margin-top: 0; }
 .app-row .cmd-edit input[data-appname] { font-family: inherit; font-size: 13px; }
-.app-row .in-ws { font-size: 11px; font-weight: 400; color: var(--faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.app-row .cmd-edit input { flex: 1; min-width: 0; font-family: var(--mono); font-size: 12px; }
-.iconbtn { width: 38px; height: 38px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--button-border); border-radius: 8px; background: transparent; color: var(--text2); }
+.app-row .in-ws { font-size: 11px; font-weight: 400; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-row .cmd-edit input { flex: 1; min-width: 0; font-family: var(--font-mono); font-size: 12px; }
+.iconbtn { width: 38px; height: 38px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--button-border); border-radius: 8px; background: transparent; color: var(--text-secondary); }
 .iconbtn:hover { background: var(--button-hover); color: var(--text); }
-.empty { padding: 28px 18px; text-align: center; color: var(--sub); font-size: 13px; }
+.empty { padding: 28px 18px; text-align: center; color: var(--muted); font-size: 13px; }
 .key-row { display: flex; align-items: center; gap: 16px; padding: 10px 18px; border-top: 1px solid var(--line); }
 .key-row:first-child { border-top: 0; }
 .key-row .k { width: 230px; flex-shrink: 0; }
 .key-row .what { flex: 1; min-width: 0; font-size: 13px; }
 .key-row .what .h { margin-top: 2px; }
 .key-row .row-btns { flex-shrink: 0; }
-.key-row.rec { background: var(--side); }
+.key-row.rec { background: var(--panel); }
 .key-row.rec kbd { border-color: var(--guide-accent); color: var(--guide-accent); }
 .sub-h { margin: 28px 0 0; font-size: 16px; font-weight: 600; }
-kbd.none { color: var(--faint); font-family: inherit; }
-kbd { display: inline-block; padding: 3px 8px; background: var(--key); border: 1px solid var(--key-border); border-radius: 6px; color: var(--key-text); font-family: var(--mono); font-size: 12px; }
+kbd.none { color: var(--muted); font-family: inherit; }
+kbd { display: inline-block; padding: 3px 8px; background: var(--key-badge); border: 1px solid var(--key-badge-border); border-radius: 6px; color: var(--key-badge-text); font-family: var(--font-mono); font-size: 12px; }
 
-.ws-card .item:first-child { background: var(--side); border-radius: 12px 12px 0 0; }
+.ws-card .item:first-child { background: var(--panel); border-radius: 12px 12px 0 0; }
 .ws-card.closed .item:first-child { border-radius: 12px; }
 .ws-head { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.ws-grip { flex-shrink: 0; width: 22px; height: 30px; display: grid; place-items: center; padding: 0; margin-right: -6px; border: 0; border-radius: 6px; background: none; color: var(--faint); cursor: grab; touch-action: none; }
+.ws-grip { flex-shrink: 0; width: 22px; height: 30px; display: grid; place-items: center; padding: 0; margin-right: -6px; border: 0; border-radius: 6px; background: none; color: var(--muted); cursor: grab; touch-action: none; }
 .ws-grip svg { width: 10px; height: 16px; }
-button.ws-grip:hover, button.ws-grip:focus-visible { color: var(--text); background: var(--field); outline: none; }
+button.ws-grip:hover, button.ws-grip:focus-visible { color: var(--text); background: var(--input); outline: none; }
 .ws-card.dragging { opacity: .5; }
 .ws-drop { height: 3px; margin: -8px 0 5px; border-radius: 2px; background: var(--guide-accent); }
-.ws-head .chev { flex-shrink: 0; width: 16px; height: 16px; color: var(--sub); transition: transform .15s; }
+.ws-head .chev { flex-shrink: 0; width: 16px; height: 16px; color: var(--muted); transition: transform .15s; }
 .ws-head[aria-expanded="true"] .chev { transform: rotate(90deg); }
 .ws-head:focus-visible { outline: 2px solid var(--guide-accent); outline-offset: 4px; border-radius: 6px; }
 .ws-name { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-.update { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 18px; padding: 14px 18px; border: 1px solid var(--guide-accent); border-radius: 12px; background: var(--panel); }
+.update { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 18px; padding: 14px 18px; border: 1px solid var(--guide-accent); border-radius: 12px; background: var(--card); }
 .update .t { font-weight: 700; }
 .field-wide { width: 260px; }
-.toast { position: fixed; left: 50%; bottom: 74px; transform: translateX(-50%); padding: 10px 16px; background: var(--panel); border: 1px solid var(--guide-accent); border-radius: 10px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .2s; }
+.toast { position: fixed; left: 50%; bottom: 74px; transform: translateX(-50%); padding: 10px 16px; background: var(--card); border: 1px solid var(--guide-accent); border-radius: 10px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transition: opacity .2s; }
 .toast.on { opacity: 1; pointer-events: auto; }
 .toast button { margin-left: 12px; padding: 0; border: 0; background: none; color: var(--text); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
 details.adv > summary { display: flex; align-items: baseline; gap: 12px; padding: 15px 18px; cursor: pointer; list-style: none; }
 details.adv > summary::-webkit-details-marker { display: none; }
-details.adv > summary::before { content: "›"; display: inline-block; width: 10px; color: var(--sub); transition: transform .15s; }
+details.adv > summary::before { content: "›"; display: inline-block; width: 10px; color: var(--muted); transition: transform .15s; }
 details.adv[open] > summary::before { transform: rotate(90deg); }
 details.adv > summary .t { font-size: 15px; font-weight: 600; }
-details.adv > summary .h { font-size: 13px; color: var(--sub); }
+details.adv > summary .h { font-size: 13px; color: var(--muted); }
 details.adv > .item:first-of-type { border-top: 1px solid var(--line); }
 .prof-row .badge { margin-left: 8px; }
-.modal-note { margin: 0; font-size: 13px; color: var(--sub); }
+.modal-note { margin: 0; font-size: 13px; color: var(--muted); }
 .modal-bg { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.45); }
 .modal-bg.on { display: flex; }
-.modal { width: 380px; display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; }
+.modal { width: 380px; display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; }
 .modal h2 { margin: 0; font-size: 16px; }
 .modal.imp { width: 460px; }
-.imp-file { font-family: var(--mono); font-size: 12px; color: var(--sub); overflow-wrap: anywhere; }
+.imp-file { font-family: var(--font-mono); font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
 .imp-list { margin: 8px 0 0; padding-left: 18px; font-size: 13px; }
 .imp-list li { margin: 3px 0; }
-.imp-warn { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--danger-line); border-radius: 8px; font-size: 12px; color: var(--text); }
+.imp-warn { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--danger-border); border-radius: 8px; font-size: 12px; color: var(--text); }
 .imp-warn b { color: var(--danger); }
-.imp-warn code { font-family: var(--mono); font-size: 11px; color: var(--sub); display: block; margin-top: 4px; overflow-wrap: anywhere; }
+.imp-warn code { font-family: var(--font-mono); font-size: 11px; color: var(--muted); display: block; margin-top: 4px; overflow-wrap: anywhere; }
 .modal .err { min-height: 16px; font-size: 12px; color: var(--danger); }
 /* user guide side panel */
-.guide { width: 420px; flex-shrink: 0; display: none; flex-direction: column; border-left: 1px solid var(--line); background: var(--panel); }
+.guide { width: 420px; flex-shrink: 0; display: none; flex-direction: column; border-left: 1px solid var(--line); background: var(--card); }
 .app.with-guide .guide { display: flex; }
-.guide-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px 16px; border-bottom: 1px solid var(--line); background: var(--side); }
+.guide-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px 16px; border-bottom: 1px solid var(--line); background: var(--panel); }
 .guide-head .ttl { font-weight: 600; margin-right: auto; }
-.guide-head label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--sub); cursor: pointer; }
+.guide-head label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); cursor: pointer; }
 .guide-head input { accent-color: var(--guide-accent); margin: 0; }
 .guide iframe { flex: 1; width: 100%; border: 0; background: var(--bg); }
 .nav-btn.guide-btn { margin-top: auto; }
-.nav-btn.guide-btn[aria-pressed="true"] { color: var(--text); background: var(--nav-on); }
-.nav-btn.guide-btn kbd { margin-left: auto; padding: 0 5px; font-size: 11px; color: var(--faint); }
+.nav-btn.guide-btn[aria-pressed="true"] { color: var(--text); background: var(--nav-selected); }
+.nav-btn.guide-btn kbd { margin-left: auto; padding: 0 5px; font-size: 11px; color: var(--muted); }
 .nav-btn.guide-btn ~ .nav-foot { margin-top: 0; }
 /* Apps page: zone map with draggable app chips */
 .appmap-card { padding: 14px 18px 16px; }
 .appmap-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
-.appmap-head .h { font-size: 12px; color: var(--sub); }
+.appmap-head .h { font-size: 12px; color: var(--muted); }
 .appmap { position: relative; margin: 0 auto; }
-.appmap .mon { position: absolute; background: var(--bezel); border: 1px solid var(--border); border-radius: 8px; }
+.appmap .mon { position: absolute; background: var(--bezel); border: 1px solid var(--card-border); border-radius: 8px; }
 .appmap .dz { position: absolute; display: flex; flex-direction: column; gap: 4px; padding: 20px 5px 5px; background: var(--zone); border: 2px solid var(--zone-line); border-radius: 6px; overflow: hidden; }
-.appmap .dz.game { background: var(--game); }
-.appmap .dz.over { border-color: var(--guide-accent); background: var(--row-sel); }
-.appmap .dz .zn { position: absolute; top: 3px; left: 7px; font-size: 11px; font-weight: 700; color: var(--sub); }
+.appmap .dz.game { background: var(--zone-game); }
+.appmap .dz.over { border-color: var(--guide-accent); background: var(--row-selected); }
+.appmap .dz .zn { position: absolute; top: 3px; left: 7px; font-size: 11px; font-weight: 700; color: var(--muted); }
 .appmap .dz .zn .tag { margin-left: 4px; }
-.chip-app { display: flex; align-items: center; gap: 6px; max-width: 100%; height: 26px; padding: 0 8px 0 3px; border: 1px solid var(--border); border-radius: 7px; background: var(--panel); color: var(--text); font-size: 12px; cursor: grab; touch-action: none; user-select: none; }
-.chip-app .ti { width: 19px; height: 19px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: var(--accent); color: var(--accent-ink); font-size: 10px; font-weight: 700; }
+.chip-app { display: flex; align-items: center; gap: 6px; max-width: 100%; height: 26px; padding: 0 8px 0 3px; border: 1px solid var(--card-border); border-radius: 7px; background: var(--card); color: var(--text); font-size: 12px; cursor: grab; touch-action: none; user-select: none; }
+.chip-app .ti { width: 19px; height: 19px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 5px; background: var(--accent); color: var(--accent-fg); font-size: 10px; font-weight: 700; }
 .chip-app .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chip-app.dragging { opacity: .35; }
 .chip-ghost { position: fixed; z-index: 50; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,.35); cursor: grabbing; }
-.dz .more { font-size: 11px; color: var(--sub); padding-left: 4px; }
+.dz .more { font-size: 11px; color: var(--muted); padding-left: 4px; }
 .dz-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; width: 100%; min-height: 40px; padding: 6px 10px; border: 2px dashed var(--zone-line); border-radius: 8px; }
-.dz-strip.over { border-color: var(--guide-accent); background: var(--row-sel); }
+.dz-strip.over { border-color: var(--guide-accent); background: var(--row-selected); }
 .app-row.unused .tile, .app-row.unused .nm { opacity: .6; }
 .unplaced-lost { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; width: 100%; }
-.unplaced { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; color: var(--sub); }
+.unplaced { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; font-size: 12px; color: var(--muted); }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
 @media (max-width: 900px) {
@@ -347,7 +356,7 @@ details.adv > .item:first-of-type { border-top: 1px solid var(--line); }
 <div class="app">
   <nav aria-label="ZoneSnap sections">
     <div class="brand">
-      <svg width="28" height="28" viewBox="0 0 18 18" aria-hidden="true"><rect x="0.5" y="0.5" width="17" height="17" rx="4" fill="var(--accent)"/><rect x="3" y="4" width="3" height="4" rx="1" fill="var(--accent-ink)" opacity=".55"/><rect x="3" y="9.5" width="3" height="4.5" rx="1" fill="var(--accent-ink)" opacity=".55"/><rect x="7" y="4" width="5" height="10" rx="1" fill="var(--accent-ink)"/><rect x="13" y="4" width="2.5" height="10" rx="1" fill="var(--accent-ink)" opacity=".55"/></svg>
+      <svg width="28" height="28" viewBox="0 0 18 18" aria-hidden="true"><rect x="0.5" y="0.5" width="17" height="17" rx="4" fill="var(--accent)"/><rect x="3" y="4" width="3" height="4" rx="1" fill="var(--accent-fg)" opacity=".55"/><rect x="3" y="9.5" width="3" height="4.5" rx="1" fill="var(--accent-fg)" opacity=".55"/><rect x="7" y="4" width="5" height="10" rx="1" fill="var(--accent-fg)"/><rect x="13" y="4" width="2.5" height="10" rx="1" fill="var(--accent-fg)" opacity=".55"/></svg>
       ZoneSnap
     </div>
     <div class="prof-wrap">
@@ -372,7 +381,7 @@ details.adv > .item:first-of-type { border-top: 1px solid var(--line); }
       <h1 id="zones-h" class="sr">Zones</h1>
       <div class="ed-top">
         <div class="left">
-          <label for="layoutpick" style="font-size:12px;color:var(--sub)">Layout of</label>
+          <label for="layoutpick" style="font-size:12px;color:var(--muted)">Layout of</label>
           <select id="layoutpick" class="field" aria-label="Workspace or game whose layout you're editing"></select>
           <span class="pill"><span class="dot"></span><span id="active-now"></span></span>
         </div>
@@ -418,16 +427,7 @@ details.adv > .item:first-of-type { border-top: 1px solid var(--line); }
             <div class="seg" role="group" aria-label="Theme" id="themeseg"></div></div>
           <div class="item"><div><div class="t">Accent colour</div><div class="h">Buttons, switches, highlights and the title bar. Adjusted if text on it would be hard to read.</div></div>
             <div class="seg" role="group" aria-label="Accent colour" id="accseg"></div></div>
-          <div class="item" id="accrow" hidden><div class="swrow" id="swrow" role="group" aria-label="Custom colour"></div>
-            <div class="accedit" id="accedit" hidden role="group" aria-label="Choose a colour">
-              <div><div class="acc-sv" id="acc-sv" tabindex="0" role="slider" aria-label="Saturation and brightness (arrow keys)"><b id="acc-knob"></b></div>
-                <input class="acc-hue" id="acc-hue" type="range" min="0" max="359" step="1" aria-label="Hue"></div>
-              <div class="acc-side">
-                <div class="acc-prev"><i></i><input class="field" id="acc-hex" maxlength="7" spellcheck="false" aria-label="Hex colour, like #7A5AE0"></div>
-                <div class="acc-note" id="acc-note"></div>
-                <div class="row-btns"><button class="btn" data-act="accentCancel">Cancel</button><button class="btn primary" data-act="accentApply">Apply colour</button></div>
-              </div>
-            </div></div>
+          <div class="item" id="accrow" hidden><div id="accent-picker"></div></div>
         </div>
         <div class="card">
           <div class="item" style="display:block">
@@ -487,11 +487,11 @@ details.adv > .item:first-of-type { border-top: 1px solid var(--line); }
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
           <div><h1>Apps</h1>
             <p class="lede">One list of apps for every workspace: each workspace opens the apps it uses and snaps them into their zones. To add an app, put its window in a zone and press <span id="addapp-key">Ctrl+Alt+A</span> (with a workspace on, it's placed in that workspace too). Changes here save straight away.</p></div>
-          <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub)">Workspace <select id="appsws" class="field"></select></label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)">Workspace <select id="appsws" class="field"></select></label>
         </div>
         <div class="card appmap-card" id="appmap-card">
           <div class="appmap-head"><div class="t" style="font-weight:600" id="appmap-title">Where each app goes</div><div class="h">Drag an app onto a zone to move it there</div></div>
-          <p class="h" id="appmap-normal" style="display:none;margin:-4px 0 10px;font-size:12px;color:var(--sub)">Where each app goes when you come back to Default, after gaming mode or another workspace switches off. <b>Leave where it is</b> keeps it where that workspace left it; <b>Put back</b> returns it to where it was before that workspace switched on.</p>
+          <p class="h" id="appmap-normal" style="display:none;margin:-4px 0 10px;font-size:12px;color:var(--muted)">Where each app goes when you come back to Default, after gaming mode or another workspace switches off. <b>Leave where it is</b> keeps it where that workspace left it; <b>Put back</b> returns it to where it was before that workspace switched on.</p>
           <div class="appmap" id="appmap"></div>
           <div class="unplaced" id="unplaced"></div>
         </div>
@@ -548,7 +548,7 @@ details.adv > .item:first-of-type { border-top: 1px solid var(--line); }
   <form class="modal" id="modal-form" role="dialog" aria-modal="true" aria-labelledby="modal-h">
     <h2 id="modal-h">New workspace</h2>
     <p class="modal-note" id="modal-note"></p>
-    <label for="modal-in" style="font-size:12px;color:var(--sub)">Name</label>
+    <label for="modal-in" style="font-size:12px;color:var(--muted)">Name</label>
     <input id="modal-in" class="field" autocomplete="off">
     <div class="err" id="modal-err"></div>
     <div class="row-btns" style="justify-content:flex-end">
@@ -650,72 +650,277 @@ function receive(msg) {
 }
 if (host) host.addEventListener("message", (e) => receive(e.data));
 
-// Accent colour: ZoneSnap's teal (the CSS above), your Windows accent or a custom colour. Every
-// accent shade comes from that one colour, worked out as ZoneSnap does in Theme.ahk: the fill is
-// darkened until white text on it reads (4.5:1); the highlight is lighter in dark mode and deeper
-// in light mode, readable on the panels; selection and tip tints are mixed from it.
-const ACCENT_SWATCHES = [["Teal", "437784"], ["Blue", "3B6FD8"], ["Purple", "7A5AE0"], ["Pink", "C2477F"], ["Red", "C8463D"],
+/* ============================================================================
+   House style 2: accent colour for web UIs (HTML, WebView2, Electron, Tauri)
+   The rules from house-style.md ("Accent colour"), the same as palette.py and Accent.cs.
+   colour-editor.js is the picker that uses these (swatches, Other…, the colour editor).
+
+   applyAccent(null)            the house teal (clears every override)
+   applyAccent("7A5AE0")        one colour -> every accent token, readable in this theme
+   Call it again after the theme changes (dark <-> light), and with the colour being
+   chosen while the colour editor is open (live preview); null puts the saved one back.
+   ============================================================================ */
+const HOUSE_SWATCHES = [["Teal", "437784"], ["Blue", "3B6FD8"], ["Purple", "7A5AE0"], ["Pink", "C2477F"], ["Red", "C8463D"],
   ["Orange", "C9692A"], ["Gold", "A9821C"], ["Green", "3D8A4F"], ["Slate", "5B6B80"]];
-const ACCENT_VARS = ["--accent", "--accent-hover", "--accent-ink", "--guide-accent", "--row-sel", "--zone-sel",
-  "--tip", "--tip-border", "--tip-text", "--key", "--key-border", "--key-text"];
-const hexOk = (h) => /^[0-9a-f]{6}$/i.test(h || "");
-function lumHex(h) {
+const HOUSE_SURFACES = { dark: { card: "19202A", panel: "10151B" }, light: { card: "FFFFFF", panel: "EAEEF2" } };
+const ACCENT_TOKENS = ["--accent", "--accent-hover", "--accent-fg", "--guide-accent", "--title-bar", "--row-selected",
+  "--zone-selected", "--tip", "--tip-border", "--tip-text", "--key-badge", "--key-badge-border", "--key-badge-text"];
+
+function accentLum(h) {
   const lin = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
   return 0.2126 * lin(parseInt(h.slice(0, 2), 16)) + 0.7152 * lin(parseInt(h.slice(2, 4), 16)) + 0.0722 * lin(parseInt(h.slice(4, 6), 16));
 }
-function contrastHex(a, b) { const x = lumHex(a), y = lumHex(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
-function mixHex(a, b, k) {
+function accentContrast(a, b) { const x = accentLum(a), y = accentLum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+// a moved k (0-1) of the way towards b
+function accentMix(a, b, k) {
   return [0, 2, 4].map((i) => { const p = parseInt(a.slice(i, i + 2), 16), q = parseInt(b.slice(i, i + 2), 16);
     return Math.max(0, Math.min(255, Math.round(p + (q - p) * k))).toString(16).padStart(2, "0"); }).join("").toUpperCase();
 }
-function shadeFor(hex, target, need, against) { let c = hex, k = 0; while (contrastHex(c, against) < need && k < 1) { k += 0.04; c = mixHex(hex, target, k); } return c; }
-let accPreview = null, accHSV = null;          // the custom colour being chosen (not saved yet)
+// hex moved towards target (black or white) in 4% steps until it has `need` contrast with `against`
+function accentShade(hex, target, need, against) {
+  let c = hex.toUpperCase(), k = 0;
+  while (accentContrast(c, against) < need && k < 1) { k += 0.04; c = accentMix(hex, target, k); }
+  return c;
+}
+
+// Every accent token (RRGGBB, no #) from one colour, for the dark or light theme
+function accentTokens(base, dark) {
+  const { card, panel } = HOUSE_SURFACES[dark ? "dark" : "light"];
+  const fill = accentShade(base.toUpperCase(), "000000", 4.5, "FFFFFF");          // white text on it reads
+  // the highlight is measured against the surface it's hardest to read on: Card in dark mode, Panel in light
+  const guide = dark ? accentShade(accentMix(fill, "FFFFFF", 0.25), "FFFFFF", 4.5, card) : accentShade(fill, "000000", 4.5, panel);
+  const tint = (k) => accentMix(card, guide, k);
+  return {
+    "--accent": fill, "--accent-hover": accentMix(fill, "000000", 0.14), "--accent-fg": "FFFFFF",
+    "--guide-accent": guide, "--title-bar": fill,
+    "--row-selected": tint(0.16), "--zone-selected": tint(dark ? 0.24 : 0.18),
+    "--tip": tint(dark ? 0.10 : 0.09), "--key-badge": tint(dark ? 0.10 : 0.09),
+    "--tip-border": tint(dark ? 0.26 : 0.30), "--key-badge-border": tint(dark ? 0.26 : 0.30),
+    "--tip-text": dark ? accentMix(guide, "FFFFFF", 0.6) : accentMix(guide, "000000", 0.3),
+    "--key-badge-text": dark ? accentMix(guide, "FFFFFF", 0.35) : accentShade(guide, "000000", 4.5, tint(0.09)),
+  };
+}
+
+// Is the page dark right now? (data-theme, or the system when it's left off)
+function accentPageIsDark() {
+  const t = document.documentElement.dataset.theme;
+  return t ? t === "dark" : !matchMedia("(prefers-color-scheme: light)").matches;
+}
+
+function applyAccent(base) {
+  const st = document.documentElement.style;
+  ACCENT_TOKENS.forEach((k) => st.removeProperty(k));
+  if (!base || !/^[0-9a-f]{6}$/i.test(base)) return;                       // the house teal
+  const t = accentTokens(base, accentPageIsDark());
+  for (const k in t) st.setProperty(k, "#" + t[k]);
+}
+
+// The colour editor's square (saturation x, brightness y) and hue slider
 function hexToHsv(h) {
   const [r, g, b] = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255), mx = Math.max(r, g, b), d = mx - Math.min(r, g, b);
   const hue = d === 0 ? 0 : mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
-  return { h: (hue * 60 + 360) % 360, s: mx ? d / mx : 0, v: mx };      // unrounded, so a colour comes back exactly
+  return { h: (hue * 60 + 360) % 360, s: mx ? d / mx : 0, v: mx };        // unrounded, so a colour comes back exactly
 }
 function hsvToHex({ h, s, v }) {
   const f = (n) => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); };
   return [f(5), f(3), f(1)].map((c) => Math.round(c * 255).toString(16).padStart(2, "0")).join("").toUpperCase();
 }
-// Other…: open the colour editor on the current colour; the window previews as you choose
-function openAccentEditor() {
-  accHSV = hexToHsv(hexOk(form.accentCustom) ? form.accentCustom.toUpperCase() : "7A5AE0");
-  $("#accedit").hidden = false;
-  showAccentPick(true);
-  $("#acc-sv").focus();
+
+if (typeof module !== "undefined") module.exports = { HOUSE_SWATCHES, accentTokens, accentContrast, accentMix, accentShade, hexToHsv, hsvToHex };
+
+/* ============================================================================
+   House style 2: the accent colour picker for web UIs (HTML, WebView2, Electron, Tauri)
+   Swatches, the Other… button and the inline colour editor, behaving exactly like ZoneSnap 0.39
+   (house-style.md, "Accent colour" and section 4). Needs accent.js loaded first, and the
+   .swatches / .swatch / .swatch-other / .colour-editor / .ce-* classes from house-style.css.
+
+   The app keeps the mode control (App teal | Windows | Custom) and shows this picker only in
+   Custom mode:
+
+     const picker = createAccentPicker(document.querySelector("#accent-picker"), {
+       value: settings.accentCustom,            // the saved custom colour, RRGGBB
+       onApply(hex) { save("accentCustom", hex); toast("Accent colour applied", undo); },
+       onPreview(hex) { host?.postMessage({ type: "accentPreview", hex: hex || "" }); },  // optional
+     });
+     picker.set(hex)       after an Undo or a settings reload
+     picker.close()        when leaving the page or switching away from Custom (puts the saved colour back)
+     picker.isOpen()
+
+   Live preview calls applyAccent() on the page. Nothing is saved until Apply colour, Enter or a
+   swatch click; Cancel, Esc and close() put the saved colour back. Builds its DOM with
+   createElement and textContent only, and accepts nothing but six hex digits.
+   ============================================================================ */
+function createAccentPicker(container, opts) {
+  const isHex = (h) => /^[0-9a-f]{6}$/i.test(h || "");
+  const DEFAULT = "7A5AE0";                                    // Purple, the house default custom colour
+  let saved = isHex(opts.value) ? opts.value.toUpperCase() : DEFAULT;
+  let hsv = null, previewing = null, dragging = false;          // hsv is set only while the editor is open
+
+  const el = (tag, cls, attrs) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    for (const k in attrs || {}) e.setAttribute(k, attrs[k]);
+    return e;
+  };
+
+  // ---- markup ----
+  container.textContent = "";
+  const row = el("div", "swatches", { role: "group", "aria-label": "Custom colour" });
+  const lab = el("span", "lab"); lab.textContent = "Colour"; row.append(lab);
+  const swatches = HOUSE_SWATCHES.map(([name, hex]) => {
+    const b = el("button", "swatch", { type: "button", title: name, "aria-label": name, "aria-pressed": "false" });
+    b.style.background = "#" + hex;
+    b.dataset.hex = hex;
+    b.addEventListener("click", () => pickSwatch(hex));
+    row.append(b);
+    return b;
+  });
+  const other = el("button", "swatch-other", { type: "button", "aria-pressed": "false", "aria-expanded": "false" });
+  const otherTile = el("i"), otherText = document.createTextNode("Other…");
+  other.append(otherTile, otherText);
+  other.addEventListener("click", () => (hsv ? cancel() : open()));
+  row.append(other);
+
+  const editor = el("div", "colour-editor", { role: "group", "aria-label": "Choose a colour" });
+  editor.hidden = true;
+  const left = el("div");
+  const sv = el("div", "ce-sv", { tabindex: "0", role: "slider", "aria-label": "Saturation and brightness (arrow keys)" });
+  const knob = el("b"); sv.append(knob);
+  const hue = el("input", "ce-hue", { type: "range", min: "0", max: "359", step: "1", "aria-label": "Hue" });
+  left.append(sv, hue);
+  const side = el("div", "ce-side");
+  const prev = el("div", "ce-preview");
+  const hexBox = el("input", "field", { maxlength: "7", spellcheck: "false", "aria-label": "Hex colour, like #7A5AE0" });
+  prev.append(el("i"), hexBox);
+  const note = el("div", "ce-note", { "aria-live": "polite" });
+  const btns = el("div", "row-btns");
+  const cancelBtn = el("button", "btn", { type: "button" }); cancelBtn.textContent = "Cancel";
+  const applyBtn = el("button", "btn primary", { type: "button" }); applyBtn.textContent = "Apply colour";
+  btns.append(cancelBtn, applyBtn);
+  side.append(prev, note, btns);
+  editor.append(left, side);
+  container.append(row, editor);
+
+  // ---- state ----
+  function restore() {                       // put the saved colour back on the page (and the host)
+    applyAccent(saved);
+    if (opts.onPreview) opts.onPreview(null);
+  }
+  function renderRow() {
+    const known = HOUSE_SWATCHES.some((w) => w[1] === saved);
+    swatches.forEach((b) => b.setAttribute("aria-pressed", String(!hsv && b.dataset.hex === saved)));
+    other.setAttribute("aria-pressed", String(!!hsv || !known));
+    other.setAttribute("aria-expanded", String(!!hsv));
+    otherTile.className = known ? "" : "current";
+    otherText.textContent = known ? "Other…" : "#" + saved;
+  }
+  function strong(text) { const s = el("strong"); s.textContent = text; return s; }
+  function show(setHexBox) {                 // draw the editor and preview the colour on the whole page
+    const hex = hsvToHex(hsv);
+    if (hex !== previewing) {
+      previewing = hex;
+      applyAccent(hex);
+      if (opts.onPreview) opts.onPreview(hex);
+    }
+    sv.style.setProperty("--ce-hue", `hsl(${hsv.h} 100% 50%)`);
+    knob.style.left = hsv.s * 100 + "%";
+    knob.style.top = (1 - hsv.v) * 100 + "%";
+    sv.setAttribute("aria-valuetext", "#" + hex);
+    hue.value = Math.round(hsv.h);
+    if (setHexBox) hexBox.value = "#" + hex;
+    const shown = accentTokens(hex, accentPageIsDark())["--accent"];
+    note.textContent = "";
+    note.append(strong("Previewing."), shown !== hex
+      ? ` Shown as #${shown}, a little deeper so white text on it stays readable. `
+      : " The whole window shows this colour while you choose. ", strong("Apply colour"), " keeps it; Cancel or Esc goes back.");
+    renderRow();
+  }
+  function open() {
+    hsv = hexToHsv(saved);                   // unrounded, so the colour comes back exactly
+    previewing = null;
+    editor.hidden = false;
+    show(true);
+    sv.focus();
+  }
+  function shut() { hsv = null; previewing = null; dragging = false; editor.hidden = true; renderRow(); }
+  function cancel() { if (!hsv) return; shut(); restore(); }
+  function apply() {
+    if (!hsv) return;
+    const hex = hsvToHex(hsv);
+    shut();
+    if (hex === saved) { restore(); return; }
+    saved = hex;
+    applyAccent(saved);
+    if (opts.onPreview) opts.onPreview(null);
+    renderRow();
+    opts.onApply(saved);
+  }
+  function pickSwatch(hex) {
+    if (hsv) shut();
+    if (hex === saved) { restore(); return; }
+    saved = hex;
+    applyAccent(saved);
+    if (opts.onPreview) opts.onPreview(null);
+    renderRow();
+    opts.onApply(saved);
+  }
+
+  // ---- input ----
+  function svAt(e) {
+    const r = sv.getBoundingClientRect();
+    hsv.s = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    hsv.v = Math.max(0, Math.min(1, 1 - (e.clientY - r.top) / r.height));
+    show(true);
+  }
+  sv.addEventListener("pointerdown", (e) => {   // pick on press, follow the pointer until it's let go
+    if (!hsv) return;
+    e.preventDefault();
+    sv.focus();
+    dragging = true;
+    svAt(e);
+    try { sv.setPointerCapture(e.pointerId); } catch (_) { /* old WebView */ }
+  });
+  sv.addEventListener("pointermove", (e) => { if (dragging && hsv) svAt(e); });
+  sv.addEventListener("pointerup", () => { dragging = false; });
+  sv.addEventListener("pointercancel", () => { dragging = false; });
+  hue.addEventListener("input", () => { if (hsv) { hsv.h = Number(hue.value); show(true); } });
+  hexBox.addEventListener("input", () => {
+    const h = hexBox.value.trim().replace(/^#/, "");
+    if (hsv && isHex(h)) { hsv = hexToHsv(h.toUpperCase()); show(false); }
+  });
+  cancelBtn.addEventListener("click", () => { cancel(); other.focus(); });
+  applyBtn.addEventListener("click", () => { apply(); other.focus(); });
+  editor.addEventListener("keydown", (e) => {
+    if (!hsv) return;
+    if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); cancel(); other.focus(); return; }
+    if (e.key === "Enter" && e.target.tagName !== "BUTTON") { e.preventDefault(); apply(); other.focus(); return; }
+    if (e.target === sv && e.key.startsWith("Arrow")) {
+      e.preventDefault();
+      const d = e.shiftKey ? 0.1 : 0.02;
+      if (e.key === "ArrowLeft") hsv.s = Math.max(0, hsv.s - d);
+      if (e.key === "ArrowRight") hsv.s = Math.min(1, hsv.s + d);
+      if (e.key === "ArrowUp") hsv.v = Math.min(1, hsv.v + d);
+      if (e.key === "ArrowDown") hsv.v = Math.max(0, hsv.v - d);
+      show(true);
+    }
+  });
+
+  renderRow();
+  return {
+    set(hex) { if (isHex(hex)) { if (hsv) shut(); saved = hex.toUpperCase(); renderRow(); } },
+    close: cancel,
+    isOpen: () => !!hsv,
+    get value() { return saved; },
+  };
 }
-function closeAccentEditor() {
-  if (accPreview) send({ type: "accentPreview", hex: "" });
-  accPreview = accHSV = null;
-  $("#accedit").hidden = true;
-  applyTheme();
-  if (S && page === "general") renderSettings();
-}
-// Show the chosen colour in the editor and preview it on the whole window
-function showAccentPick(setHex) {
-  const hex = hsvToHex(accHSV);
-  if (hex !== accPreview) send({ type: "accentPreview", hex });       // the title bar previews too
-  accPreview = hex;
-  $("#acc-sv").style.setProperty("--acc-hue", `hsl(${accHSV.h} 100% 50%)`);
-  $("#acc-knob").style.left = accHSV.s * 100 + "%"; $("#acc-knob").style.top = (1 - accHSV.v) * 100 + "%";
-  $("#acc-sv").setAttribute("aria-valuetext", "#" + hex);
-  $("#acc-hue").value = Math.round(accHSV.h);
-  if (setHex) $("#acc-hex").value = "#" + hex;
-  applyTheme();
-  const shown = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim().slice(1).toUpperCase();
-  $("#acc-note").innerHTML = (shown && shown !== hex ? `<strong>Previewing.</strong> Shown as #${shown}, a little deeper so white text on it stays readable. ` : "<strong>Previewing.</strong> The whole window shows this colour while you choose. ")
-    + "<strong>Apply colour</strong> keeps it; Cancel or Esc goes back.";
-  $$("#swrow [aria-pressed]").forEach((b) => b.setAttribute("aria-pressed", String(!!b.dataset.act)));
-  $("#swrow [data-act=accentOther]").setAttribute("aria-expanded", "true");
-}
-function accentSvAt(e) {
-  const r = $("#acc-sv").getBoundingClientRect();
-  accHSV.s = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-  accHSV.v = Math.max(0, Math.min(1, 1 - (e.clientY - r.top) / r.height));
-  showAccentPick(true);
-}
+
+if (typeof module !== "undefined") module.exports = { createAccentPicker };
+
+// Accent colour: ZoneSnap teal (the CSS above), your Windows accent or a custom colour. accent.js
+// works out every accent token from that one colour (the same rules as Theme.ahk, which colours the
+// title bar); colour-editor.js is the house picker, shown in Custom mode. Both are the house files.
+const hexOk = (h) => /^[0-9a-f]{6}$/i.test(h || "");
+let picker = null, accPreview = null;           // accPreview: the colour the editor is showing, not saved yet
 function accentBase() {
   const st = (S && S.settings) || {}, mode = st.accentMode || "teal";
   if (mode === "windows") return hexOk(S.theme && S.theme.accent) ? S.theme.accent : "";
@@ -723,24 +928,16 @@ function accentBase() {
   return "";
 }
 function applyTheme() {
-  const t = S.theme || {}, dark = !!num(t.dark), root = document.documentElement, st = root.style;
-  root.dataset.theme = dark ? "dark" : "light";
-  ACCENT_VARS.forEach((k) => st.removeProperty(k));
-  const base = accPreview || accentBase();
-  if (!base) return;                                       // ZoneSnap teal
-  const panel = dark ? "19202A" : "FFFFFF";                // cards (house Card)
-  const fill = shadeFor(base.toUpperCase(), "000000", 4.5, "FFFFFF");
-  // the highlight is measured against the surface it's hardest to read on: cards in dark mode,
-  // the sidebar (house Panel, the darkest) in light mode
-  const guide = dark ? shadeFor(mixHex(fill, "FFFFFF", 0.25), "FFFFFF", 4.5, panel) : shadeFor(fill, "000000", 4.5, "EAEEF2");
-  const tint = (k) => "#" + mixHex(panel, guide, k), set = (k, v) => st.setProperty(k, v);
-  set("--accent", "#" + fill); set("--accent-hover", "#" + mixHex(fill, "000000", 0.14)); set("--accent-ink", "#FFFFFF");
-  set("--guide-accent", "#" + guide);
-  set("--row-sel", tint(0.16)); set("--zone-sel", tint(dark ? 0.24 : 0.18));
-  set("--tip", tint(dark ? 0.10 : 0.09)); set("--key", tint(dark ? 0.10 : 0.09));
-  set("--tip-border", tint(dark ? 0.26 : 0.3)); set("--key-border", tint(dark ? 0.26 : 0.3));
-  set("--tip-text", "#" + (dark ? mixHex(guide, "FFFFFF", 0.6) : mixHex(guide, "000000", 0.3)));
-  set("--key-text", "#" + (dark ? mixHex(guide, "FFFFFF", 0.35) : shadeFor(guide, "000000", 4.5, mixHex(panel, guide, 0.09))));
+  document.documentElement.dataset.theme = num((S.theme || {}).dark) ? "dark" : "light";
+  applyAccent(accPreview || accentBase() || null);
+}
+function initAccentPicker() {
+  picker = createAccentPicker($("#accent-picker"), {
+    value: form.accentCustom,
+    onApply(hex) { saveSetting("accentCustom", hex, "Accent colour applied"); },
+    // the title bar previews too; null puts the saved colour back (and this page's mode with it)
+    onPreview(hex) { accPreview = hex || null; send({ type: "accentPreview", hex: hex || "" }); if (!hex) applyTheme(); },
+  });
 }
 function loadWork(layout) { editLayout = layout; work = serverZones(layout); base = zonesKey(work); sel = Math.min(sel, Math.max(0, work.length - 1)); }
 function loadForm() { form = clone(S.settings); }
@@ -758,7 +955,7 @@ function saveSetting(key, value, label) {
 // ---------------------------------------------------------------- render
 function render() {
   if (!S) return;
-  if (accPreview && page !== "general") { send({ type: "accentPreview", hex: "" }); accPreview = accHSV = null; $("#accedit").hidden = true; applyTheme(); }   // left without applying
+  if (picker && picker.isOpen() && page !== "general") picker.close();   // left without applying
   if (page !== lastPage) { lastPage = page; guideFollow(); }
   $$(".nav-btn").forEach((b) => b.toggleAttribute("aria-current", false) || (b.dataset.go === page && b.setAttribute("aria-current", "page")));
   $$(".page").forEach((p) => p.classList.toggle("on", p.id === "page-" + page));
@@ -863,7 +1060,7 @@ function renderInspector() {
     <div class="grid2">
       ${["x", "y", "w", "h"].map((k) => `<label>${{ x: "X", y: "Y", w: "Width", h: "Height" }[k]}<input class="field num" type="number" step="10" data-field="${k}" value="${rel[k]}"></label>`).join("")}
     </div>
-    <div style="font-size:12px;color:var(--sub)">Aspect ${ratio(z.w, z.h)}${monitors().length > 1 ? " · X and Y from monitor " + (monOf(z) + 1) + "'s corner" : ""}</div>
+    <div style="font-size:12px;color:var(--muted)">Aspect ${ratio(z.w, z.h)}${monitors().length > 1 ? " · X and Y from monitor " + (monOf(z) + 1) + "'s corner" : ""}</div>
     <div class="sep"></div>
     <div class="stack">
       <button class="btn" data-act="splitH">Split top / bottom</button>
@@ -939,7 +1136,7 @@ function edges() {
 // The update banner: a newer version (Update now for ZoneSnap.exe, Download for the script
 // version), its download while it runs, or the version Update now just installed
 function updateBanner() {
-  const up = S.update || {}, u = up.version, sub = (t) => `<div style="font-size:12px;color:var(--sub);margin-top:3px">${t}</div>`;
+  const up = S.update || {}, u = up.version, sub = (t) => `<div style="font-size:12px;color:var(--muted);margin-top:3px">${t}</div>`;
   if (u && (up.state === "downloading" || up.state === "installing"))
     return `<div class="update" aria-live="polite"><div><div class="t">${up.state === "installing" ? "Installing" : "Downloading"} ZoneSnap ${esc(u)}…</div>
       ${sub("ZoneSnap checks the file is the release's own, then restarts on the new version. Your settings stay as they are.")}</div>
@@ -970,11 +1167,9 @@ function renderSettings() {
   $("#accseg").innerHTML = [["teal", "ZoneSnap teal"], ["windows", "Windows"], ["custom", "Custom"]]
     .map((o) => `<button data-accmode="${o[0]}" aria-pressed="${o[0] === am}">${o[1]}</button>`).join("");
   $("#accrow").hidden = am !== "custom";
-  if (am !== "custom" && accPreview) { send({ type: "accentPreview", hex: "" }); accPreview = accHSV = null; $("#accedit").hidden = true; applyTheme(); }
-  const known = ACCENT_SWATCHES.some((w) => w[1] === ac);
-  $("#swrow").innerHTML = '<span class="lab">Colour</span>' + ACCENT_SWATCHES.map((w) =>
-      `<button class="sw" data-swatch="${w[1]}" style="background:#${w[1]}" title="${w[0]}" aria-label="${w[0]}" aria-pressed="${w[1] === ac}"></button>`).join("")
-    + `<button class="swpick" data-act="accentOther" aria-pressed="${!known || !!accPreview}" aria-expanded="${!!accPreview}"><i class="${known ? "" : "cur"}"></i>${known ? "Other…" : "#" + esc(ac)}</button>`;
+  if (!picker) initAccentPicker();
+  if (am !== "custom" && picker.isOpen()) picker.close();
+  if (!picker.isOpen() && hexOk(ac)) picker.set(ac);
   $("#dragseg").innerHTML = drags.map((d) => `<button data-drag="${esc(d[0])}" aria-pressed="${d[0] === form.dragKey}">${esc(d[1])}</button>`).join("");
   $("#margin").textContent = form.lockBottomMargin;
   $("#update-banner").innerHTML = updateBanner();
@@ -1155,7 +1350,7 @@ function renderGameLayouts() {
           <datalist id="game-running">${running.map((x) => `<option value="${esc(x)}">`).join("")}</datalist>
           <button class="btn primary" data-act="gameAddSave">Add</button><button class="btn" data-act="gameAddCancel">Cancel</button></div>
         <div class="cmd" style="font-family:inherit">Start typing, or pick a program that's running now. The game is detected when it starts; it isn't snapped or opened.</div></div></div>`
-    : `<div class="app-row"><div class="info"><div class="h" style="font-size:12px;color:var(--sub)">Games you add with ${esc(keyOf("AddApp"))} in the game zone appear here. To detect a game without putting it in a zone, add it here.</div></div>
+    : `<div class="app-row"><div class="info"><div class="h" style="font-size:12px;color:var(--muted)">Games you add with ${esc(keyOf("AddApp"))} in the game zone appear here. To detect a game without putting it in a zone, add it here.</div></div>
         <button class="btn" data-act="gameAddOpen">Add a game</button></div>`;
   $("#gamelayouts").innerHTML = games.map((g) => {
     const own = num(g.ownLayout);
@@ -1163,7 +1358,7 @@ function renderGameLayouts() {
     return `<div class="app-row"><div class="tile" aria-hidden="true">${esc(a.name.charAt(0).toUpperCase())}</div>
       <div class="info">${appNameHtml(a, kindBtn(g.exe, true))}
       <div class="cmd">${esc(g.exe)}</div></div>
-      <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub)">Layout
+      <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)">Layout
         <select class="field" data-gamelayout="${esc(g.exe)}"><option value="0"${own ? "" : " selected"}>Gaming layout</option><option value="1"${own ? " selected" : ""}>Its own layout</option></select></label>
       ${own ? `<button class="btn" data-editlayout="game:${esc(g.exe)}">Edit</button>` : ""}${renameBtn(a)}</div>`;
   }).join("") + add;
@@ -1219,10 +1414,10 @@ function appRow(a, label, place, opts, extra) {
           <button class="btn primary" data-act="normCmdSave" data-win="${esc(a.key)}">Save</button><button class="btn" data-act="cmdCancel">Cancel</button></div>`
         : `<div class="cmd" title="${esc(a.cmd)}">${esc(a.cmd || (a.game ? "Detected when it starts - not launched" : "Snap only - not launched"))}</div>${webAddressNote(a)}`}
     </div>
-    <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub)">${label} ${sel}</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)">${label} ${sel}</label>
     ${removing ? (a.game
-        ? `<span style="font-size:12px;color:var(--sub)">Remove this game?</span><button class="btn danger" data-act="appRemoveYes" data-key="${esc(a.entry)}">Remove</button><button class="btn" data-act="appRemoveNo">Keep</button>`
-        : `<span style="font-size:12px;color:var(--sub)">Remove from ZoneSnap${inWs ? " (used in " + esc(inWs) + ")" : ""}?</span><button class="btn danger" data-act="normRemoveYes" data-win="${esc(a.key)}">Remove</button><button class="btn" data-act="appRemoveNo">Keep</button>`)
+        ? `<span style="font-size:12px;color:var(--muted)">Remove this game?</span><button class="btn danger" data-act="appRemoveYes" data-key="${esc(a.entry)}">Remove</button><button class="btn" data-act="appRemoveNo">Keep</button>`
+        : `<span style="font-size:12px;color:var(--muted)">Remove from ZoneSnap${inWs ? " (used in " + esc(inWs) + ")" : ""}?</span><button class="btn danger" data-act="normRemoveYes" data-win="${esc(a.key)}">Remove</button><button class="btn" data-act="appRemoveNo">Keep</button>`)
       : `${renameBtn(a)}${a.game ? "" : `<button class="iconbtn" data-act="normCmdEdit" data-win="${esc(a.key)}" aria-label="Edit how ${esc(a.name)} opens" title="Edit how it opens">${ICON_EDIT}</button>`}
          <button class="iconbtn" data-act="appRemoveAsk" data-key="${esc(a.key)}" aria-label="Remove ${esc(a.name)}" title="${a.game ? "Remove this game" : "Remove from ZoneSnap (every workspace)"}">${ICON_REMOVE}</button>`}
   </div>`;
@@ -1471,12 +1666,6 @@ function act(name, el) {
     case "makeGame": work.forEach((x, i) => (x.game = i === sel)); break;
     case "removeZone": if (z) { work.splice(sel, 1); sel = Math.max(0, sel - 1); } break;
     case "modalCancel": closeModal(); return;
-    case "accentOther": if (accPreview) closeAccentEditor(); else openAccentEditor(); return;
-    case "accentCancel": closeAccentEditor(); return;
-    case "accentApply": { const hex = accPreview;
-      if (!hex || hex === String(form.accentCustom).toUpperCase()) { closeAccentEditor(); return; }
-      accPreview = accHSV = null; $("#accedit").hidden = true;
-      saveSetting("accentCustom", hex, "Accent colour applied"); return; }       // ZoneSnap recolours the title bar on save
     case "undoSetting": if (undoSet) { const u = undoSet; undoSet = null; form[u.key] = u.value; S.settings[u.key] = u.value; send({ type: "saveSettings", settings: { [u.key]: u.value } }); if (u.key.startsWith("accent")) applyTheme(); toast("Undone"); render(); } return;
     case "newProfile": openModal("newProfile"); return;
     case "manageProfiles": page = "general"; render(); { const c = $("#profiles"); if (c) c.scrollIntoView({ block: "start" }); } return;
@@ -1587,7 +1776,6 @@ document.addEventListener("click", (e) => {
   if (t.dataset.drag) { saveSetting("dragKey", t.dataset.drag, "Drag shortcut saved"); return; }
   if (t.dataset.themepick) { saveSetting("theme", t.dataset.themepick, "Theme saved"); return; }
   if (t.dataset.accmode) { saveSetting("accentMode", t.dataset.accmode, "Accent colour saved"); return; }
-  if (t.dataset.swatch) { if (accPreview) { send({ type: "accentPreview", hex: "" }); accPreview = accHSV = null; $("#accedit").hidden = true; applyTheme(); } saveSetting("accentCustom", t.dataset.swatch, "Accent colour saved"); return; }
   if (t.dataset.step) { saveSetting("lockBottomMargin", Math.max(0, Math.min(20, num(form.lockBottomMargin) + Number(t.dataset.step)))); return; }
   if (t.dataset.profswitch) { if (confirm("Switch to " + t.dataset.profswitch + "'s profile? ZoneSnap switches off any workspace, puts windows back and restarts.")) send({ type: "profileSwitch", name: t.dataset.profswitch }); return; }
   if (t.dataset.profrename) { openModal("renameProfile", t.dataset.profrename); return; }
@@ -1619,44 +1807,13 @@ document.addEventListener("change", (e) => {
     send({ type: "gameLayout", exe: t.dataset.gamelayout, own: t.value === "1" });
   }
 });
-// Dragging on the colour square: pick on press, follow the pointer anywhere until it's let go
-let accDrag = false;
-document.addEventListener("pointerdown", (e) => {
-  if (!accHSV || !e.target.closest || !e.target.closest("#acc-sv")) return;
-  e.preventDefault();
-  accDrag = true;
-  accentSvAt(e);
-  try { $("#acc-sv").setPointerCapture(e.pointerId); } catch (_) {}
-});
-document.addEventListener("pointermove", (e) => { if (accDrag && accHSV) accentSvAt(e); });
-document.addEventListener("pointerup", () => { accDrag = false; });
-document.addEventListener("pointercancel", () => { accDrag = false; });
 document.addEventListener("input", (e) => {
-  if (e.target.id === "acc-hue" && accHSV) { accHSV.h = Number(e.target.value); showAccentPick(true); return; }
-  if (e.target.id === "acc-hex" && accHSV) {
-    const h = e.target.value.trim().replace(/^#/, "");
-    if (/^[0-9a-f]{6}$/i.test(h)) { accHSV = hexToHsv(h.toUpperCase()); showAccentPick(false); }
-    return;
-  }
   if (e.target.id === "dim") {          // preview while dragging; saved when you let go (change)
     const v = Math.round(Number(e.target.value) / 100 * 255);
     $("#dimval").textContent = e.target.value + "%"; $("#dp1").style.opacity = $("#dp2").style.opacity = (v / 255).toFixed(2);
   }
 });
 document.addEventListener("keydown", (e) => {
-  if (accPreview && e.target.closest && e.target.closest("#accedit")) {       // the colour editor
-    if (e.key === "Escape") { e.preventDefault(); closeAccentEditor(); $("[data-act=accentOther]").focus(); return; }
-    if (e.key === "Enter" && e.target.tagName !== "BUTTON") { e.preventDefault(); act("accentApply"); return; }
-    if (e.target.id === "acc-sv" && e.key.startsWith("Arrow")) {
-      e.preventDefault();
-      const d = e.shiftKey ? 0.1 : 0.02;
-      if (e.key === "ArrowLeft") accHSV.s = Math.max(0, accHSV.s - d);
-      if (e.key === "ArrowRight") accHSV.s = Math.min(1, accHSV.s + d);
-      if (e.key === "ArrowUp") accHSV.v = Math.min(1, accHSV.v + d);
-      if (e.key === "ArrowDown") accHSV.v = Math.max(0, accHSV.v - d);
-      showAccentPick(true); return;
-    }
-  }
   if (e.key === "Enter" && e.target.dataset && e.target.dataset.cmd) act("cmdSave", { dataset: { key: e.target.dataset.cmd } });
   if (e.key === "Enter" && e.target.dataset && e.target.dataset.normcmd) act("normCmdSave", { dataset: { win: e.target.dataset.normcmd } });
   if (e.key === "Enter" && e.target.id === "game-add") act("gameAddSave", {});
@@ -1719,7 +1876,7 @@ function showImport(p) {
     <ul class="imp-list">${items.map((t) => "<li>" + t + "</li>").join("") || "<li>Nothing ZoneSnap can use</li>"}</ul>
     ${all && cmds.length ? `<div class="imp-warn"><b>Only import everything from a file you trust.</b> It includes ${plural(cmds.length, "app command", "app commands")} that run when a workspace switches on:
       ${cmds.slice(0, 4).map((c) => "<code>" + esc(c) + "</code>").join("")}${cmds.length > 4 ? `<code>…and ${cmds.length - 4} more</code>` : ""}</div>` : ""}
-    <p style="font-size:12px;color:var(--sub);margin:10px 0 0">${all ? "Everything replaces all of this profile's settings and restarts ZoneSnap. Layouts only keeps your apps, workspaces and shortcuts." : "This file only holds layouts."} Your current settings are backed up first.</p>`;
+    <p style="font-size:12px;color:var(--muted);margin:10px 0 0">${all ? "Everything replaces all of this profile's settings and restarts ZoneSnap. Layouts only keeps your apps, workspaces and shortcuts." : "This file only holds layouts."} Your current settings are backed up first.</p>`;
   $("#imp-all").style.display = all ? "" : "none";
   $("#imp-zones").classList.toggle("primary", !all);
   $("#imp-modal").classList.add("on");
@@ -1777,7 +1934,7 @@ $("#modal-form").addEventListener("submit", (e) => {
 // ---------------------------------------------------------------- demo data (browser preview only)
 function demoState(extra) {
   return Object.assign({
-    type: "state", version: "0.39.5", page: new URLSearchParams(location.search).get("page") || "zones",
+    type: "state", version: "0.39.6", page: new URLSearchParams(location.search).get("page") || "zones",
     theme: { dark: new URLSearchParams(location.search).get("theme") === "light" ? 0 : 1, accent: "C24E1C" },   // demo Windows accent: orange
     monitor: { x: 0, y: 0, w: 3840, h: 1080 }, activeLayout: "Normal", gamingOn: 0,
     monitors: new URLSearchParams(location.search).get("mons") === "2"

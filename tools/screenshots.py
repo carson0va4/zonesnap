@@ -64,7 +64,7 @@ SOCIAL = """<!doctype html><html><head><meta charset="utf-8"><style>
 def social_preview(browser):
     ui = (ROOT / "ui.html").read_text(encoding="utf-8")
     logo = re.search(r'<div class="brand">\s*(<svg.*?</svg>)', ui, re.S).group(1)
-    logo = logo.replace('width="28" height="28"', 'width="64" height="64"').replace("var(--accent-ink)", "#FFFFFF").replace("var(--accent)", "#437784")
+    logo = logo.replace('width="28" height="28"', 'width="64" height="64"').replace("var(--accent-fg)", "#FFFFFF").replace("var(--accent)", "#437784")
     shot = base64.b64encode((README_SHOTS / "zone-editor.png").read_bytes()).decode()
     pg = browser.new_page(viewport={"width": 1280, "height": 640})
     pg.set_content(SOCIAL.replace("LOGO", logo).replace("SHOT", shot))

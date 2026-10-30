@@ -6,6 +6,12 @@ Every build gets its own version: a new minor version (0.x.0) for new features o
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/): each version lists what was **Added**, **Changed**, **Fixed** and **Removed**. Versions before 0.39.3 are listed without dates.
 
+## [0.39.6] - 2026-10-30
+
+### Changed
+- Nothing you'd notice: the accent colour picker and its colour rules are now the shared house files (`accent.js` and `colour-editor.js`, which were made from ZoneSnap's own), so they stay identical to the other apps. Every page looks the same as before, apart from the hue slider's handle losing its thin extra border.
+- Development: the window's colour names in `ui.html` are now the house style's (`--card`, `--muted`, `--accent-fg` and so on, with the same colours).
+
 ## [0.39.5] - 2026-10-30
 
 ### Changed

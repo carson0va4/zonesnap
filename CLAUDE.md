@@ -34,7 +34,9 @@ Notes for Claude sessions working in this repository (people: see README.md).
 - No real names in anything public: screenshots, demo data, examples and tests use generic names
   ("User", "User 2"); the copyright holder is carson0va4.
 - The window's look follows the owner's house style (teal title bar, slate greys, two teals:
-  `--accent` for fills, `--guide-accent` for focus rings and indicators).
+  `--accent` for fills, `--guide-accent` for focus rings and indicators), with the house token names.
+  The accent rules (`accent.js`), the picker (`colour-editor.js`) and its CSS are pasted into
+  `ui.html` unchanged from the house style: change them there first, then paste them in again.
 
 ## AutoHotkey v2 gotchas
 
